@@ -472,7 +472,10 @@ function renderGame() {
 
   el.dayBadge.textContent = `День ${game.day}`;
   el.phaseBadge.textContent = phaseLabel(game.phase);
-  el.roleBadge.textContent = `Роль: ${game.myRole === "spy" ? "Шпион" : "Политик"}`;
+  const roleName = game.myRole === "spy" ? "Шпион" : "Политик";
+  el.roleBadge.textContent = `Роль: ${roleName}`;
+  el.roleBadge.classList.remove("role-spy", "role-politician");
+  el.roleBadge.classList.add(game.myRole === "spy" ? "role-spy" : "role-politician");
   el.phaseHint.textContent = phaseHint(game.phase);
 
   renderGlobalProblem(game.globalProblem);

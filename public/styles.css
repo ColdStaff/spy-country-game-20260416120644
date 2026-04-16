@@ -184,6 +184,24 @@ select:focus {
   color: #efbbb7;
 }
 
+#roleBadge {
+  font-weight: 800;
+  border-width: 2px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08), 0 4px 12px rgba(6, 10, 16, 0.28);
+}
+
+#roleBadge.role-politician {
+  background: linear-gradient(180deg, #cbdcf0, #a9c1db);
+  color: #1a2d42;
+  border-color: #9fb7d2;
+}
+
+#roleBadge.role-spy {
+  background: linear-gradient(180deg, #f0c7c3, #d99892);
+  color: #4a1f1c;
+  border-color: #ca8b86;
+}
+
 .inline-row {
   display: flex;
   gap: 8px;
@@ -272,7 +290,7 @@ select:focus {
   color: var(--ink);
   border-color: #9ea5ac;
   background:
-    linear-gradient(rgba(18, 22, 28, 0.26), rgba(18, 22, 28, 0.26)),
+    linear-gradient(rgba(18, 22, 28, 0.36), rgba(18, 22, 28, 0.36)),
     url("assets/form-blank-crumpled.svg") center / cover no-repeat;
   box-shadow: 0 12px 28px rgba(8, 10, 12, 0.34);
 }
@@ -314,11 +332,11 @@ select:focus {
 }
 
 .paper-sheet .card-item {
-  border: 1px solid rgba(117, 128, 142, 0.65);
+  border: 1px solid rgba(117, 128, 142, 0.55);
   border-radius: 10px;
-  background: rgba(246, 244, 238, 0.56);
+  background: rgba(246, 244, 238, 0.38);
   padding: 9px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
 .paper-sheet .card-options {
@@ -328,7 +346,7 @@ select:focus {
 .paper-sheet .card-option {
   border: 1px solid rgba(122, 135, 151, 0.72);
   border-radius: 8px;
-  background: rgba(249, 248, 244, 0.74);
+  background: rgba(249, 248, 244, 0.58);
   color: #212c39;
   text-align: left;
   padding: 8px;
@@ -341,12 +359,12 @@ select:focus {
 
 .paper-sheet .card-option:hover {
   border-color: #7894b5;
-  background: rgba(244, 247, 251, 0.8);
+  background: rgba(244, 247, 251, 0.66);
 }
 
 .paper-sheet .card-option.voted {
   border-color: #5f82a9;
-  background: rgba(220, 233, 248, 0.84);
+  background: rgba(220, 233, 248, 0.72);
 }
 
 .option-check {
@@ -491,7 +509,7 @@ select:focus {
 #screen-game .fold-body .spy-order {
   border: 1px solid rgba(122, 132, 143, 0.7);
   border-radius: 8px;
-  background: rgba(246, 246, 243, 0.58);
+  background: rgba(246, 246, 243, 0.34);
   color: #1f2a37;
 }
 
@@ -500,12 +518,31 @@ select:focus {
   min-height: 48px;
 }
 
+#screen-game .fold-body .pill {
+  background: rgba(238, 236, 230, 0.95);
+  color: #2a3643;
+  border-color: rgba(122, 132, 143, 0.82);
+}
+
+#screen-game .fold-body .pill.good {
+  background: rgba(223, 239, 224, 0.96);
+  color: #28542c;
+  border-color: rgba(108, 150, 109, 0.9);
+}
+
+#screen-game .fold-body .pill.bad {
+  background: rgba(245, 223, 221, 0.96);
+  color: #622c28;
+  border-color: rgba(181, 109, 102, 0.9);
+}
+
 .doc-book .fold-body {
   min-height: 280px;
+  background-color: #e3ddd0;
   background:
     linear-gradient(rgba(21, 24, 30, 0.24), rgba(21, 24, 30, 0.24)),
     url("assets/doc-open-book.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
@@ -513,10 +550,11 @@ select:focus {
 
 .doc-report .fold-body {
   min-height: 240px;
+  background-color: #e2ddd3;
   background:
     linear-gradient(rgba(21, 24, 30, 0.22), rgba(21, 24, 30, 0.22)),
     url("assets/doc-report-sheet.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
@@ -524,10 +562,11 @@ select:focus {
 
 .doc-secret .fold-body {
   min-height: 250px;
+  background-color: #e1dbe1;
   background:
     linear-gradient(rgba(25, 20, 24, 0.26), rgba(25, 20, 24, 0.26)),
     url("assets/doc-secret-file.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(10, 8, 12, 0.3);
@@ -535,10 +574,11 @@ select:focus {
 
 .doc-form .fold-body {
   min-height: 220px;
+  background-color: #dfddd7;
   background:
     linear-gradient(rgba(20, 24, 29, 0.24), rgba(20, 24, 29, 0.24)),
     url("assets/doc-form-sheet.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
@@ -547,10 +587,11 @@ select:focus {
 
 .doc-newspaper .fold-body {
   min-height: 300px;
+  background-color: #d1d2d4;
   background:
-    linear-gradient(rgba(17, 18, 20, 0.2), rgba(17, 18, 20, 0.2)),
+    linear-gradient(rgba(17, 18, 20, 0.26), rgba(17, 18, 20, 0.26)),
     url("assets/doc-newspaper-cutout.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 10px 24px rgba(8, 9, 11, 0.28);
@@ -589,10 +630,11 @@ select:focus {
 
 .doc-archive .fold-body {
   min-height: 230px;
+  background-color: #cbbca4;
   background:
     linear-gradient(rgba(28, 23, 17, 0.24), rgba(28, 23, 17, 0.24)),
     url("assets/doc-archive-card.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(12, 10, 8, 0.28);
@@ -600,10 +642,11 @@ select:focus {
 
 .doc-journal .fold-body {
   min-height: 260px;
+  background-color: #d8e0e8;
   background:
     linear-gradient(rgba(20, 24, 29, 0.2), rgba(20, 24, 29, 0.2)),
     url("assets/doc-journal-page.svg") center / cover no-repeat;
-  background-size: 100% 100%, contain;
+  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
