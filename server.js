@@ -7,7 +7,8 @@ const { Server } = require("socket.io");
 
 const PORT = process.env.PORT || 3000;
 const MIN_PLAYERS = 3;
-const MAX_NEWS = 120;
+const MAX_NEWS = 140;
+const MAX_HISTORY = 20;
 
 const app = express();
 const server = http.createServer(app);
@@ -17,7 +18,6 @@ app.use(express.static(path.join(__dirname, "public")));
 const rooms = new Map();
 const socketToRoom = new Map();
 const profiles = new Map();
-const voiceScopes = new Map();
 
 const BASE_STATS = {
   economy: 55,
@@ -28,98 +28,247 @@ const BASE_STATS = {
   birthRate: 55
 };
 const STAT_KEYS = Object.keys(BASE_STATS);
+const STAT_LABELS = {
+  economy: "Экономика",
+  security: "Безопасность",
+  welfare: "Благосостояние",
+  trust: "Доверие",
+  ecology: "Экология",
+  birthRate: "Рождаемость"
+};
 
 const EVENTS = [
-  { title: "Рост мировых цен", text: "Импорт дорожает.", effects: { economy: -5, welfare: -3 } },
-  { title: "Инвестиционный форум", text: "Бизнес готов вкладываться.", effects: { economy: 4, trust: 2 } },
-  { title: "Наводнение", text: "Несколько регионов пострадали.", effects: { welfare: -5, ecology: -4 } },
-  { title: "Кибератака", text: "Госуслуги временно недоступны.", effects: { security: -6, trust: -3 } },
-  { title: "Экспортный рекорд", text: "У страны сильный внешний спрос.", effects: { economy: 5, birthRate: 1 } },
-  { title: "Утечка документов", text: "Общество ждет объяснений от власти.", effects: { trust: -6, security: -2 } }
-];
-
-const STORY = [
-  "Парламент расколот: компромисс дается тяжело.",
-  "Эксперты предупреждают о накопительном эффекте решений.",
-  "На улицах растет давление на политиков.",
-  "Внешние игроки внимательно следят за вашим курсом.",
-  "Этот раунд может стать поворотным для всей страны."
-];
-
-const MISSIONS = [
   {
-    text: "Снизьте Экономику + Доверие минимум на 8 за день.",
-    check: (start, end) => Math.max(0, start.economy - end.economy) + Math.max(0, start.trust - end.trust) >= 8,
-    success: { news: "По стране пошла волна слухов и паники.", effects: { trust: -3 }, tone: "bad" },
-    fail: { news: "Правительство удержало повестку дня.", effects: { trust: 2 }, tone: "good" }
+    title: "Срыв поставок топлива",
+    text: "Три региона остались без плановых поставок, рынок нервно реагирует.",
+    effects: { economy: -5, welfare: -3, trust: -1 }
   },
   {
-    text: "Снизьте Безопасность + Экологию минимум на 8 за день.",
-    check: (start, end) => Math.max(0, start.security - end.security) + Math.max(0, start.ecology - end.ecology) >= 8,
-    success: { news: "Системные сбои в инфраструктуре усилились.", effects: { security: -3 }, tone: "bad" },
-    fail: { news: "Ведомства быстро стабилизировали ситуацию.", effects: { security: 2 }, tone: "good" }
+    title: "Визит иностранных инвесторов",
+    text: "Капитал готов зайти в страну, но только при прозрачных правилах.",
+    effects: { economy: 4, trust: 2 }
   },
   {
-    text: "Добейтесь снижения минимум 3 показателей страны к вечеру.",
-    check: (start, end) => STAT_KEYS.filter((k) => end[k] < start[k]).length >= 3,
-    success: { news: "Последствия спорных реформ стали заметны всем.", effects: { welfare: -2, trust: -2 }, tone: "bad" },
-    fail: { news: "Кабмин сработал неожиданно слаженно.", effects: { economy: 1, trust: 1 }, tone: "good" }
+    title: "Шторм в прибрежных районах",
+    text: "Стихийное бедствие разрушило часть инфраструктуры и логистики.",
+    effects: { welfare: -4, ecology: -4, economy: -2 }
+  },
+  {
+    title: "Крупная кибератака",
+    text: "Удар пришелся по госслужбам и платежным системам.",
+    effects: { security: -6, trust: -3 }
+  },
+  {
+    title: "Прорыв в агросекторе",
+    text: "Новый урожай снижает инфляцию на базовые продукты.",
+    effects: { economy: 3, welfare: 3, birthRate: 1 }
+  },
+  {
+    title: "Утечка служебной переписки",
+    text: "Оппозиция требует отчет о спорных решениях кабинета.",
+    effects: { trust: -5, security: -1 }
+  }
+];
+
+const STORY_BEATS = [
+  "Во фракциях растет недоверие: слишком многие замечают несогласованность решений.",
+  "На рынках обсуждают, выдержит ли страна еще один политический просчет.",
+  "В международной прессе появляется версия о внешнем влиянии на внутреннюю политику.",
+  "Региональные элиты требуют быстрых и понятных действий, иначе обещают блокировать реформы.",
+  "Общество расколото: часть граждан ждет жесткого курса, часть требует мягкой стабилизации."
+];
+
+const GLOBAL_PROBLEMS = [
+  {
+    title: "Энергетический дефицит",
+    description:
+      "Страна входит в холодный сезон с дефицитом энергии. Если к дедлайну не поднять экономику, безопасность и доверие, начнется масштабный управленческий кризис.",
+    deadlineDay: 6,
+    targets: { economy: 64, security: 62, trust: 60 },
+    rewardEffects: { trust: 4, welfare: 3 },
+    failEffects: { economy: -8, trust: -8, welfare: -6 },
+    successText: "Кризис энергосистемы локализован: удалось удержать регионы от отключений.",
+    failText: "Энергетический кризис сорвал работу регионов и ударил по стабильности."
+  },
+  {
+    title: "Кризис доверия институтам",
+    description:
+      "После серии скандалов граждане перестают верить управленцам. Нужно восстановить доверие, благосостояние и безопасность до критического срока.",
+    deadlineDay: 5,
+    targets: { trust: 65, welfare: 61, security: 60 },
+    rewardEffects: { trust: 5, economy: 2 },
+    failEffects: { trust: -10, economy: -5, security: -4 },
+    successText: "Антикризисный пакет вернул легитимность институтам и снизил протестный фон.",
+    failText: "Недоверие к институтам перешло в системный общественный конфликт."
+  },
+  {
+    title: "Демографический спад",
+    description:
+      "Падение рождаемости и доходов семей угрожает долгосрочной устойчивости. Политикам нужно улучшить ключевые показатели до дедлайна.",
+    deadlineDay: 7,
+    targets: { birthRate: 63, welfare: 62, economy: 60 },
+    rewardEffects: { birthRate: 4, trust: 2 },
+    failEffects: { birthRate: -8, welfare: -6, trust: -4 },
+    successText: "Демографическая программа сработала: регионы фиксируют рост семейной активности.",
+    failText: "Демографический спад усилился и ударил по социальной устойчивости страны."
   }
 ];
 
 const CARDS = [
   {
     title: "Антикризисный бюджет",
-    description: "Нужно срочно выбрать приоритет расходов.",
+    description: "Правительство делит резервы между промышленностью, армией и соцподдержкой.",
+    lore:
+      "Казна истощена, а регионы требуют денег уже сейчас. Любое решение создаст новую группу недовольных: либо бизнес, либо семьи, либо силовой блок.",
     options: [
-      { label: "Поддержать промышленность", publicText: "Ставка на заводы.", effects: { economy: 6, welfare: -5 }, delayed: [{ inDays: 1, effects: { birthRate: -2 }, news: "Социальные программы сократились.", tone: "bad" }] },
-      { label: "Сделать упор на соцподдержку", publicText: "Поддержка семей сохранена.", effects: { welfare: 5, trust: 3, economy: -2 }, delayed: [] },
-      { label: "Смешанный курс", publicText: "Компромиссное решение.", effects: { economy: 2, welfare: 2, trust: 1 }, delayed: [{ inDays: 2, effects: { economy: -2 }, news: "Резервов стало меньше.", tone: "neutral" }] }
+      {
+        label: "Резко поддержать промышленность",
+        publicText: "Промышленный рост позволит закрыть бюджетные дыры.",
+        effects: { economy: 6, welfare: -5, trust: -2 },
+        delayed: [{ inDays: 1, effects: { birthRate: -2 }, news: "После секвестра регионы сократили семейные программы.", tone: "bad" }]
+      },
+      {
+        label: "Дать приоритет социальной поддержке",
+        publicText: "Стабильность домохозяйств снижает риск масштабных протестов.",
+        effects: { welfare: 5, trust: 3, economy: -2 },
+        delayed: [{ inDays: 2, effects: { economy: -2 }, news: "Индустриальные проекты замедлились из-за нехватки финансирования.", tone: "neutral" }]
+      },
+      {
+        label: "Компромиссный пакет",
+        publicText: "Сдержанный баланс без резких перекосов.",
+        effects: { economy: 2, welfare: 2, trust: 1 },
+        delayed: []
+      }
     ]
   },
   {
     title: "Пограничная политика",
-    description: "На границе растет напряженность.",
+    description: "На границе фиксируют действия неизвестных групп и каналов контрабанды.",
+    lore:
+      "Силовики просят экстренный бюджет, МИД настаивает на переговорах, а бизнес опасается обвала логистики. Любой выбор меняет расклад влияния внутри кабинета.",
     options: [
-      { label: "Усилить рубежи", publicText: "Силовики получают ресурсы.", effects: { security: 7, economy: -3 }, delayed: [] },
-      { label: "Ставка на дипломатию", publicText: "Переход к переговорам.", effects: { security: 2, trust: 2, economy: 1 }, delayed: [{ inDays: 1, effects: { security: -2 }, news: "Переговоры затянулись.", tone: "neutral" }] },
-      { label: "Сократить расходы на охрану", publicText: "Деньги идут в экономику.", effects: { economy: 4, welfare: 2, security: -6 }, delayed: [] }
+      {
+        label: "Немедленно усилить рубежи",
+        publicText: "Жесткий контроль снизит риск диверсий в коротком горизонте.",
+        effects: { security: 7, economy: -3, welfare: -1 },
+        delayed: []
+      },
+      {
+        label: "Ставка на дипломатический трек",
+        publicText: "Переговоры дешевле, чем затяжная силовая эскалация.",
+        effects: { security: 2, trust: 2, economy: 1 },
+        delayed: [{ inDays: 1, effects: { security: -2 }, news: "Переговоры затянулись, часть рисков вернулась.", tone: "neutral" }]
+      },
+      {
+        label: "Сократить оборонный бюджет",
+        publicText: "Высвобожденные средства поддержат внутренний рынок.",
+        effects: { economy: 4, welfare: 2, security: -6 },
+        delayed: []
+      }
     ]
   },
   {
     title: "Медиареформа",
-    description: "Общество требует порядка в инфополе.",
+    description: "Информационный хаос усиливает панику и политическое давление.",
+    lore:
+      "В стране спорят, что важнее: жестко подавить дезинформацию или сохранить открытое поле. Ошибка в балансе может подорвать легитимность власти.",
     options: [
-      { label: "Жесткий контроль", publicText: "Вводятся жесткие правила.", effects: { security: 4, trust: -5 }, delayed: [{ inDays: 2, effects: { trust: -2 }, news: "Репутационные потери усилились.", tone: "bad" }] },
-      { label: "Прозрачный надзор", publicText: "Независимый совет создан.", effects: { trust: 4, security: 1 }, delayed: [] },
-      { label: "Не вмешиваться", publicText: "Рынок решит сам.", effects: { trust: -1, security: -3 }, delayed: [{ inDays: 1, effects: { trust: -2 }, news: "Инфошум вырос.", tone: "bad" }] }
+      {
+        label: "Ввести жесткие ограничения",
+        publicText: "Без контроля инфополя государство теряет управляемость.",
+        effects: { security: 4, trust: -5 },
+        delayed: [{ inDays: 2, effects: { trust: -2 }, news: "Репутационные потери от жесткой реформы продолжают расти.", tone: "bad" }]
+      },
+      {
+        label: "Создать независимый совет",
+        publicText: "Прозрачный надзор повышает легитимность решений.",
+        effects: { trust: 4, security: 1, economy: 1 },
+        delayed: []
+      },
+      {
+        label: "Не вмешиваться",
+        publicText: "Рынок сам выровняет информационный шум.",
+        effects: { trust: -1, security: -3 },
+        delayed: [{ inDays: 1, effects: { trust: -2 }, news: "Инфополе осталось хаотичным, число фейков выросло.", tone: "bad" }]
+      }
     ]
   },
   {
     title: "Зеленый переход",
-    description: "Экология или промышленный темп?",
+    description: "Экологический долг страны достиг критической отметки.",
+    lore:
+      "Международные партнеры угрожают санкциями за загрязнение, но закрытие старых производств может обрушить занятость в промышленных районах.",
     options: [
-      { label: "Резко закрыть старые мощности", publicText: "Экология важнее темпа.", effects: { ecology: 7, economy: -5, welfare: -2 }, delayed: [] },
-      { label: "Плавная модернизация", publicText: "Переход без шока.", effects: { ecology: 3, trust: 2, economy: 1 }, delayed: [] },
-      { label: "Сохранить текущий курс", publicText: "Ставка на стабильность.", effects: { economy: 3, ecology: -6, trust: -2 }, delayed: [{ inDays: 1, effects: { welfare: -2 }, news: "В регионах растут жалобы на экологию.", tone: "bad" }] }
+      {
+        label: "Закрыть старые мощности сейчас",
+        publicText: "Экологию нужно спасать немедленно, даже ценой шока.",
+        effects: { ecology: 7, economy: -5, welfare: -2 },
+        delayed: [{ inDays: 2, effects: { trust: -2 }, news: "Закрытие заводов вызвало волну недовольства в промышленных городах.", tone: "neutral" }]
+      },
+      {
+        label: "Переходить поэтапно",
+        publicText: "Модернизация без резкого обвала рабочих мест.",
+        effects: { ecology: 3, trust: 2, economy: 1 },
+        delayed: []
+      },
+      {
+        label: "Оставить текущий курс",
+        publicText: "Экономика пока важнее долгого экологического эффекта.",
+        effects: { economy: 3, ecology: -6, trust: -2 },
+        delayed: [{ inDays: 1, effects: { welfare: -2 }, news: "Экологические жалобы населения усилились.", tone: "bad" }]
+      }
     ]
   },
   {
     title: "Налоговая политика",
-    description: "Бюджету нужен дополнительный ресурс.",
+    description: "Дефицит бюджета требует быстрых фискальных решений.",
+    lore:
+      "Крупный бизнес давит на кабинет, профсоюзы угрожают массовыми выступлениями, а Минфин предупреждает о риске кассового разрыва.",
     options: [
-      { label: "Повысить налоги для корпораций", publicText: "Бюджет усиливается.", effects: { welfare: 3, trust: 2, economy: -3 }, delayed: [] },
-      { label: "Снизить налоги ради инвестиций", publicText: "Привлекаем капитал.", effects: { economy: 5, trust: -2 }, delayed: [] },
-      { label: "Временный чрезвычайный сбор", publicText: "Мягкий компромисс.", effects: { economy: 2, security: 1, trust: -1 }, delayed: [] }
+      {
+        label: "Повысить налоги для корпораций",
+        publicText: "Сильные платят больше, бюджет стабилизируется.",
+        effects: { welfare: 3, trust: 2, economy: -3 },
+        delayed: [{ inDays: 1, effects: { economy: -1 }, news: "Инвесторы временно сократили новые проекты.", tone: "neutral" }]
+      },
+      {
+        label: "Снизить налоги ради инвестиций",
+        publicText: "Низкие ставки ускорят экономику и занятость.",
+        effects: { economy: 5, trust: -2, welfare: -1 },
+        delayed: []
+      },
+      {
+        label: "Ввести временный чрезвычайный сбор",
+        publicText: "Мягкий компромисс до выхода из кризиса.",
+        effects: { economy: 2, security: 1, trust: -1 },
+        delayed: []
+      }
     ]
   },
   {
     title: "Программа рождаемости",
-    description: "Показатели семейной демографии падают.",
+    description: "Снижение рождаемости превращается в стратегическую угрозу.",
+    lore:
+      "Молодые семьи откладывают детей из-за цен и неуверенности в будущем. Кабинет спорит: делать ли прямые выплаты или стимулировать жилье и занятость.",
     options: [
-      { label: "Увеличить выплаты", publicText: "Поддержка семей усилена.", effects: { birthRate: 6, welfare: 2, economy: -2 }, delayed: [] },
-      { label: "Льготная ипотека", publicText: "Ставка на жилье.", effects: { birthRate: 3, economy: 2, trust: 1 }, delayed: [{ inDays: 2, effects: { welfare: -1 }, news: "Стоимость аренды выросла.", tone: "neutral" }] },
-      { label: "Ничего не менять", publicText: "Курс остается прежним.", effects: { birthRate: -3, trust: -2 }, delayed: [] }
+      {
+        label: "Увеличить прямые выплаты",
+        publicText: "Семьям нужен быстрый финансовый сигнал от государства.",
+        effects: { birthRate: 6, welfare: 2, economy: -2 },
+        delayed: []
+      },
+      {
+        label: "Субсидировать ипотеку для молодых",
+        publicText: "Доступное жилье даст долгосрочный эффект для рождаемости.",
+        effects: { birthRate: 3, economy: 2, trust: 1 },
+        delayed: [{ inDays: 2, effects: { welfare: -1 }, news: "Рост спроса на жилье ускорил инфляцию аренды.", tone: "neutral" }]
+      },
+      {
+        label: "Оставить текущие меры",
+        publicText: "Бюджет не выдержит новой волны обязательств.",
+        effects: { birthRate: -3, trust: -2 },
+        delayed: []
+      }
     ]
   }
 ];
@@ -154,10 +303,20 @@ function applyEffects(stats, effects) {
     if (typeof effects[key] === "number") stats[key] = clamp(stats[key] + effects[key], 0, 100);
   }
 }
+function statLabel(key) {
+  return STAT_LABELS[key] || key;
+}
+function effectsSummary(effects) {
+  return STAT_KEYS
+    .filter((k) => typeof effects[k] === "number" && effects[k] !== 0)
+    .map((k) => `${statLabel(k)} ${effects[k] > 0 ? "+" : ""}${effects[k]}`)
+    .join(", ");
+}
 function news(game, message, tone = "neutral") {
   game.news.unshift({ id: crypto.randomUUID(), day: game.day, text: message, tone, at: Date.now() });
   if (game.news.length > MAX_NEWS) game.news.length = MAX_NEWS;
 }
+
 function makeAvatar(input) {
   const a = input && typeof input === "object" ? input : {};
   const allowed = {
@@ -189,26 +348,23 @@ function roomCode() {
   do code = crypto.randomBytes(3).toString("hex").toUpperCase(); while (rooms.has(code));
   return code;
 }
-
 function getRoom(socketId) {
   const id = socketToRoom.get(socketId);
   return id ? rooms.get(id) || null : null;
 }
-
 function channel(id) {
   return `room:${id}`;
 }
-
 function aliveIds(room) {
   if (!room.game || room.game.status !== "running") return [...room.players.keys()];
   return [...room.players.keys()].filter((id) => !room.game.removed.has(id));
 }
-
 function buildCards() {
   return shuffle(CARDS).slice(0, 3).map((card) => ({
     id: crypto.randomUUID(),
     title: card.title,
     description: card.description,
+    lore: card.lore,
     options: card.options.map((opt) => {
       const effects = {};
       for (const key of STAT_KEYS) {
@@ -216,9 +372,98 @@ function buildCards() {
         if (!base) continue;
         effects[key] = base + rnd(-1, 1);
       }
-      return { id: crypto.randomUUID(), label: opt.label, publicText: opt.publicText, effects, delayed: opt.delayed.map((d) => ({ ...d })) };
+      return {
+        id: crypto.randomUUID(),
+        label: opt.label,
+        publicText: opt.publicText,
+        effects,
+        delayed: opt.delayed.map((d) => ({ ...d }))
+      };
     })
   }));
+}
+
+function sabotageScore(option) {
+  let score = 0;
+  for (const key of STAT_KEYS) {
+    const value = option.effects[key] || 0;
+    if (value < 0) score += Math.abs(value) * 1.6;
+    else if (value > 0) score -= value * 0.45;
+  }
+  for (const delayed of option.delayed || []) {
+    for (const key of STAT_KEYS) {
+      const value = delayed.effects?.[key] || 0;
+      if (value < 0) score += Math.abs(value) * 1.15;
+      else if (value > 0) score -= value * 0.35;
+    }
+  }
+  return score;
+}
+
+function positiveSpin(option) {
+  const positives = STAT_KEYS
+    .filter((k) => (option.effects[k] || 0) > 0)
+    .map((k) => ({ key: k, value: option.effects[k] }))
+    .sort((a, b) => b.value - a.value);
+
+  if (positives.length === 0) {
+    return "Говорите о стабильности и отказе от резких рисков.";
+  }
+
+  const best = positives[0];
+  return `Подчеркивайте плюс по показателю «${statLabel(best.key)}» и обещайте быструю выгоду.`;
+}
+
+function buildSpyOrders(cards) {
+  return cards.map((card) => {
+    const ranked = [...card.options].sort((a, b) => sabotageScore(b) - sabotageScore(a));
+    const target = ranked[0];
+    return {
+      cardId: card.id,
+      cardTitle: card.title,
+      targetOptionId: target.id,
+      targetOptionLabel: target.label,
+      agentGoal: `Продвигайте вариант: «${target.label}».`,
+      coverStory: `Как убеждать политиков: ${target.publicText} ${positiveSpin(target)}`,
+      sabotagePlan: `Скрытый расчёт: ${effectsSummary(target.effects) || "влияние проявится позже"}.`
+    };
+  });
+}
+
+function createGlobalProblem() {
+  const template = pick(GLOBAL_PROBLEMS);
+  return {
+    title: template.title,
+    description: template.description,
+    deadlineDay: template.deadlineDay,
+    targets: { ...template.targets },
+    rewardEffects: { ...template.rewardEffects },
+    failEffects: { ...template.failEffects },
+    successText: template.successText,
+    failText: template.failText,
+    resolved: false,
+    failed: false
+  };
+}
+
+function globalProblemState(problem, stats) {
+  const targets = Object.entries(problem.targets).map(([key, target]) => ({
+    key,
+    label: statLabel(key),
+    target,
+    current: stats[key],
+    reached: stats[key] >= target
+  }));
+  const reachedCount = targets.filter((t) => t.reached).length;
+  return {
+    title: problem.title,
+    description: problem.description,
+    deadlineDay: problem.deadlineDay,
+    resolved: problem.resolved,
+    failed: problem.failed,
+    progress: Math.floor((reachedCount / Math.max(1, targets.length)) * 100),
+    targets
+  };
 }
 
 function createGame(room) {
@@ -230,12 +475,12 @@ function createGame(room) {
   ids.forEach((id) => {
     roles[id] = spies.has(id) ? "spy" : "politician";
   });
+
   return {
     status: "running",
     day: 1,
     phase: "day",
     stats: cloneStats(BASE_STATS),
-    dayStart: cloneStats(BASE_STATS),
     cards: [],
     votes: {},
     arrests: {},
@@ -244,11 +489,13 @@ function createGame(room) {
     roles,
     spies,
     removed: new Set(),
-    objective: pick(MISSIONS),
     event: null,
     story: "",
     news: [],
     results: [],
+    history: [],
+    spyOrders: [],
+    globalProblem: createGlobalProblem(),
     winner: null
   };
 }
@@ -269,13 +516,9 @@ function emitRooms() {
   io.emit("rooms:list", publicRooms());
 }
 
-function finish(room, winner) {
-  const game = room.game;
-  if (!game || game.status !== "running") return;
-  game.status = "ended";
-  game.phase = "ended";
-  game.winner = winner;
-  news(game, winner === "spies" ? "Страна вошла в системный кризис. Шпионы победили." : "Шпионы разоблачены. Политики победили.", winner === "spies" ? "bad" : "good");
+function collapsed(stats) {
+  const low = STAT_KEYS.filter((k) => stats[k] <= 15).length;
+  return stats.economy <= 5 || stats.security <= 5 || stats.trust <= 5 || low >= 3;
 }
 
 function citizensWin(room) {
@@ -283,9 +526,13 @@ function citizensWin(room) {
   return [...room.game.spies].filter((id) => !room.game.removed.has(id)).length === 0;
 }
 
-function collapsed(stats) {
-  const low = STAT_KEYS.filter((k) => stats[k] <= 15).length;
-  return stats.economy <= 5 || stats.security <= 5 || stats.trust <= 5 || low >= 3;
+function finish(room, winner) {
+  const game = room.game;
+  if (!game || game.status !== "running") return;
+  game.status = "ended";
+  game.phase = "ended";
+  game.winner = winner;
+  news(game, winner === "spies" ? "Страна вошла в системный кризис. Шпионы победили." : "Шпионская сеть раскрыта. Политики удержали страну.", winner === "spies" ? "bad" : "good");
 }
 
 function revealArrest(room) {
@@ -295,9 +542,9 @@ function revealArrest(room) {
   const p = room.players.get(id);
   if (g.roles[id] === "spy") {
     g.removed.add(id);
-    news(g, `${p ? p.nickname : "Подозреваемый"} оказался шпионом и арестован.`, "good");
+    news(g, `${p ? p.nickname : "Подозреваемый"} оказался шпионом и арестован(а).`, "good");
   } else {
-    news(g, `${p ? p.nickname : "Подозреваемый"} оказался невиновным.`, "bad");
+    news(g, `${p ? p.nickname : "Подозреваемый"} оказался невиновным. Парламент теряет время.`, "bad");
   }
   g.pendingReveal = null;
 }
@@ -315,29 +562,53 @@ function applyPending(room) {
   g.pendingEffects = next;
 }
 
+function refreshGlobalProblem(room) {
+  const g = room.game;
+  if (!g || !g.globalProblem || g.globalProblem.resolved || g.globalProblem.failed) return;
+
+  const targets = Object.entries(g.globalProblem.targets);
+  const allReached = targets.every(([key, target]) => g.stats[key] >= target);
+
+  if (allReached) {
+    g.globalProblem.resolved = true;
+    applyEffects(g.stats, g.globalProblem.rewardEffects);
+    news(g, g.globalProblem.successText, "good");
+    return;
+  }
+
+  if (g.day > g.globalProblem.deadlineDay) {
+    g.globalProblem.failed = true;
+    applyEffects(g.stats, g.globalProblem.failEffects);
+    news(g, g.globalProblem.failText, "bad");
+  }
+}
+
 function startDay(room) {
   const g = room.game;
   if (!g || g.status !== "running") return;
+
   revealArrest(room);
   applyPending(room);
+  refreshGlobalProblem(room);
+
   if (citizensWin(room)) return finish(room, "citizens");
   if (collapsed(g.stats)) return finish(room, "spies");
 
   const ev = pick(EVENTS);
   g.event = { title: ev.title, text: ev.text };
-  g.story = pick(STORY);
+  g.story = pick(STORY_BEATS);
   applyEffects(g.stats, ev.effects);
   news(g, `Событие дня: ${ev.title}. ${ev.text}`, "neutral");
 
+  refreshGlobalProblem(room);
   if (collapsed(g.stats)) return finish(room, "spies");
 
   g.phase = "day";
   g.cards = buildCards();
   g.votes = Object.fromEntries(g.cards.map((c) => [c.id, {}]));
   g.arrests = {};
-  g.objective = pick(MISSIONS);
-  g.dayStart = cloneStats(g.stats);
   g.results = [];
+  g.spyOrders = buildSpyOrders(g.cards);
 }
 
 function advanceDay(room) {
@@ -345,7 +616,6 @@ function advanceDay(room) {
   room.game.day += 1;
   startDay(room);
 }
-
 function allCardsDone(room) {
   const g = room.game;
   if (!g || g.phase !== "day") return false;
@@ -356,6 +626,7 @@ function allCardsDone(room) {
 function resolveDay(room) {
   const g = room.game;
   if (!g || g.phase !== "day" || g.status !== "running") return;
+
   const voters = aliveIds(room);
   g.results = [];
 
@@ -365,6 +636,7 @@ function resolveDay(room) {
       const vote = g.votes[card.id]?.[id];
       if (vote) tally[vote] = (tally[vote] || 0) + 1;
     });
+
     let max = -1;
     const top = [];
     card.options.forEach((o) => {
@@ -373,22 +645,88 @@ function resolveDay(room) {
         max = cnt;
         top.length = 0;
         top.push(o);
-      } else if (cnt === max) top.push(o);
+      } else if (cnt === max) {
+        top.push(o);
+      }
     });
+
     const winner = top[rnd(0, top.length - 1)];
     applyEffects(g.stats, winner.effects);
     news(g, `По карточке «${card.title}» выбрано: ${winner.label}. ${winner.publicText}`, "neutral");
+
     winner.delayed.forEach((d) => {
       g.pendingEffects.push({ day: g.day + d.inDays, effects: d.effects, news: d.news, tone: d.tone || "neutral" });
     });
-    g.results.push({ cardTitle: card.title, winnerLabel: winner.label });
+
+    const votesByOption = card.options.map((o) => ({
+      label: o.label,
+      votes: tally[o.id] || 0
+    }));
+
+    g.results.push({
+      cardId: card.id,
+      cardTitle: card.title,
+      winnerOptionId: winner.id,
+      winnerLabel: winner.label,
+      winnerReason: winner.publicText,
+      effectsText: effectsSummary(winner.effects),
+      votesByOption
+    });
   }
 
-  const ok = g.objective.check(g.dayStart, g.stats);
-  const outcome = ok ? g.objective.success : g.objective.fail;
-  g.pendingEffects.push({ day: g.day + 1, effects: outcome.effects, news: outcome.news, tone: outcome.tone });
+  let successCount = 0;
+  g.spyOrders.forEach((order) => {
+    const result = g.results.find((r) => r.cardId === order.cardId);
+    if (result && result.winnerOptionId === order.targetOptionId) successCount += 1;
+  });
+
+  if (successCount >= 3) {
+    g.pendingEffects.push({
+      day: g.day + 1,
+      effects: { economy: -4, trust: -4, security: -2 },
+      news: "Иностранные агенты выполнили план на максимум: саботаж дал эффект.",
+      tone: "bad"
+    });
+  } else if (successCount === 2) {
+    g.pendingEffects.push({
+      day: g.day + 1,
+      effects: { economy: -2, trust: -3 },
+      news: "Часть шпионских директив выполнена: в системе растут перекосы.",
+      tone: "bad"
+    });
+  } else if (successCount === 1) {
+    g.pendingEffects.push({
+      day: g.day + 1,
+      effects: { trust: -1 },
+      news: "Шпионы смогли провести только один вредный сценарий.",
+      tone: "neutral"
+    });
+  } else {
+    g.pendingEffects.push({
+      day: g.day + 1,
+      effects: { trust: 2, welfare: 1 },
+      news: "Диверсия сорвана: кабинет удержал курс и стабилизировал ситуацию.",
+      tone: "good"
+    });
+  }
+
+  g.history.unshift({
+    day: g.day,
+    eventTitle: g.event?.title || "Без события",
+    sabotageSuccess: successCount,
+    cards: g.results.map((r) => ({
+      cardTitle: r.cardTitle,
+      winnerLabel: r.winnerLabel,
+      reason: r.winnerReason,
+      effectsText: r.effectsText,
+      votesByOption: r.votesByOption
+    }))
+  });
+  if (g.history.length > MAX_HISTORY) g.history.length = MAX_HISTORY;
 
   g.phase = "night";
+  refreshGlobalProblem(room);
+
   if (collapsed(g.stats)) return finish(room, "spies");
   if (citizensWin(room)) return finish(room, "citizens");
 }
@@ -402,34 +740,40 @@ function allArrestsDone(room) {
 function resolveArrest(room) {
   const g = room.game;
   if (!g || g.phase !== "arrest" || g.status !== "running") return;
+
   const voters = aliveIds(room);
   const tally = {};
   voters.forEach((id) => {
-    const t = g.arrests[id];
-    if (!t || t === "skip") return;
-    if (!voters.includes(t)) return;
-    tally[t] = (tally[t] || 0) + 1;
+    const target = g.arrests[id];
+    if (!target || target === "skip") return;
+    if (!voters.includes(target)) return;
+    tally[target] = (tally[target] || 0) + 1;
   });
+
   let target = null;
-  let max = 0;
+  let maxVotes = 0;
   Object.entries(tally).forEach(([id, cnt]) => {
-    if (cnt > max) {
-      max = cnt;
+    if (cnt > maxVotes) {
+      maxVotes = cnt;
       target = id;
     }
   });
+
   const need = Math.floor(voters.length / 2) + 1;
-  if (target && max >= need) {
+  if (target && maxVotes >= need) {
     g.pendingReveal = { targetId: target, day: g.day + 1 };
     const p = room.players.get(target);
-    news(g, `${p ? p.nickname : "Политик"} задержан(а). Вердикт будет завтра.`, "neutral");
-  } else news(g, "Большинство за арест не набрано.", "neutral");
+    news(g, `${p ? p.nickname : "Политик"} задержан(а). Проверка личности будет завтра.`, "neutral");
+  } else {
+    news(g, "Большинство за арест не набрано.", "neutral");
+  }
 
   advanceDay(room);
 }
 
 function snapshot(room, viewer) {
   const g = room.game;
+  const liveIds = g ? aliveIds(room) : [];
   const payload = {
     id: room.id,
     hostId: room.hostId,
@@ -439,29 +783,51 @@ function snapshot(room, viewer) {
       hasPassword: Boolean(room.settings.password),
       locked: room.settings.locked
     },
-    players: [...room.players.values()].map((p) => ({ id: p.id, nickname: p.nickname, avatar: p.avatar, isHost: p.isHost })),
+    players: [...room.players.values()].map((p) => ({
+      id: p.id,
+      nickname: p.nickname,
+      avatar: p.avatar,
+      isHost: p.isHost,
+      removed: g ? g.removed.has(p.id) : false
+    })),
     game: null
   };
+
   if (!g) return payload;
+
   payload.game = {
     status: g.status,
     day: g.day,
     phase: g.phase,
     stats: g.stats,
+    aliveIds: liveIds,
+    aliveCount: liveIds.length,
     myRole: g.roles[viewer] || null,
-    objective: g.roles[viewer] === "spy" ? g.objective.text : null,
-    spyTeam: g.roles[viewer] === "spy" ? [...g.spies].filter((id) => !g.removed.has(id)).map((id) => ({ id, nickname: room.players.get(id)?.nickname || "Шпион" })) : [],
+    spyTeam:
+      g.roles[viewer] === "spy"
+        ? [...g.spies].filter((id) => !g.removed.has(id)).map((id) => ({ id, nickname: room.players.get(id)?.nickname || "Шпион" }))
+        : [],
+    spyOrders: g.roles[viewer] === "spy" ? g.spyOrders : [],
+    globalProblem: globalProblemState(g.globalProblem, g.stats),
     event: g.event,
     story: g.story,
-    cards: g.cards.map((c) => ({ id: c.id, title: c.title, description: c.description, options: c.options.map((o) => ({ id: o.id, label: o.label, publicText: o.publicText })) })),
+    cards: g.cards.map((c) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      lore: c.lore,
+      options: c.options.map((o) => ({ id: o.id, label: o.label, publicText: o.publicText }))
+    })),
     myVotes: Object.fromEntries(Object.entries(g.votes).map(([cardId, votes]) => [cardId, votes[viewer] || null])),
     voteProgress: Object.fromEntries(g.cards.map((c) => [c.id, Object.keys(g.votes[c.id] || {}).length])),
     myArrestVote: g.arrests[viewer] || null,
     news: g.news,
     results: g.results,
+    history: g.history,
     winner: g.winner,
     pendingReveal: g.pendingReveal ? { ...g.pendingReveal } : null
   };
+
   return payload;
 }
 
@@ -486,7 +852,7 @@ function leaveRoom(room, socketId) {
   if (!room.players.has(socketId)) return;
   room.players.delete(socketId);
   socketToRoom.delete(socketId);
-  dropVoice(socketId);
+
   if (room.game && room.game.status === "running") {
     room.game.removed.add(socketId);
     room.game.spies.delete(socketId);
@@ -496,23 +862,15 @@ function leaveRoom(room, socketId) {
     if (citizensWin(room)) finish(room, "citizens");
     else if (collapsed(room.game.stats)) finish(room, "spies");
   }
+
   if (room.players.size === 0) {
     rooms.delete(room.id);
     emitRooms();
     return;
   }
+
   hostFix(room);
   emitState(room);
-}
-
-function dropVoice(socketId) {
-  for (const [key, set] of voiceScopes.entries()) {
-    if (!set.has(socketId)) continue;
-    set.delete(socketId);
-    const [roomId, scope] = key.split("::");
-    io.to(channel(roomId)).emit("voice:user-left", { scope, id: socketId });
-    if (set.size === 0) voiceScopes.delete(key);
-  }
 }
 io.on("connection", (socket) => {
   socket.emit("session:connected", { id: socket.id });
@@ -620,7 +978,6 @@ io.on("connection", (socket) => {
     if (room.game && room.game.status === "running") return ack({ ok: false, error: "Игра уже идет." });
 
     room.game = createGame(room);
-    news(room.game, "Игра началась. Шпионы получили свои цели.", "neutral");
     startDay(room);
     ack({ ok: true });
     emitState(room);
@@ -700,6 +1057,7 @@ io.on("connection", (socket) => {
     const room = getRoom(socket.id);
     const g = room?.game;
     if (!room) return ack({ ok: false, error: "Вы не в комнате." });
+
     const msg = text(payload.text, "", 300);
     if (!msg) return ack({ ok: false, error: "Пустое сообщение." });
 
@@ -725,50 +1083,12 @@ io.on("connection", (socket) => {
     } else {
       io.to(channel(room.id)).emit("chat:message", payloadMessage);
     }
-    ack({ ok: true });
-  });
 
-  socket.on("voice:join", (payload = {}, ack = () => {}) => {
-    const room = getRoom(socket.id);
-    if (!room) return ack({ ok: false, error: "Вы не в комнате." });
-    const g = room.game;
-    const scope = payload.scope === "spy" ? "spy" : "public";
-
-    if (scope === "spy") {
-      const allowed = Boolean(g && g.status === "running" && g.phase === "night" && g.roles[socket.id] === "spy" && !g.removed.has(socket.id));
-      if (!allowed) return ack({ ok: false, error: "Приватная линия доступна только шпионам ночью." });
-    }
-
-    dropVoice(socket.id);
-
-    const key = `${room.id}::${scope}`;
-    const set = voiceScopes.get(key) || new Set();
-    const members = [...set];
-    set.add(socket.id);
-    voiceScopes.set(key, set);
-    ack({ ok: true, scope, members });
-  });
-
-  socket.on("voice:leave", (ack = () => {}) => {
-    dropVoice(socket.id);
-    ack({ ok: true });
-  });
-
-  socket.on("voice:signal", (payload = {}, ack = () => {}) => {
-    const room = getRoom(socket.id);
-    if (!room) return ack({ ok: false, error: "Вы не в комнате." });
-    const scope = payload.scope === "spy" ? "spy" : "public";
-    const key = `${room.id}::${scope}`;
-    const set = voiceScopes.get(key);
-    if (!set || !set.has(socket.id) || !set.has(payload.to)) return ack({ ok: false, error: "Канал недоступен." });
-
-    io.to(payload.to).emit("voice:signal", { from: socket.id, scope, data: payload.data });
     ack({ ok: true });
   });
 
   socket.on("disconnect", () => {
     profiles.delete(socket.id);
-    dropVoice(socket.id);
     const room = getRoom(socket.id);
     if (!room) return;
     socket.leave(channel(room.id));

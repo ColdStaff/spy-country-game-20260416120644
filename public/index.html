@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="ambient"></div>
   <main class="app">
     <header class="topbar">
       <h1>Теневая Республика</h1>
@@ -21,12 +20,12 @@
       <div class="panel split">
         <div>
           <h2>Создай политика</h2>
-          <p>Введи ник, настрой внешность и входи в политическую игру со шпионами.</p>
+          <p class="muted">Введи ник и внешний вид, чтобы войти в игру.</p>
           <label class="field">
             <span>Никнейм</span>
-            <input id="nicknameInput" type="text" maxlength="24" placeholder="Например, НочнойМинистр" />
+            <input id="nicknameInput" type="text" maxlength="24" placeholder="Например, МинистрСевера" />
           </label>
-          <button id="registerBtn" class="btn primary">Войти в штаб</button>
+          <button id="registerBtn" class="btn primary">Войти</button>
         </div>
         <div>
           <h3>Внешность</h3>
@@ -47,16 +46,15 @@
         <div>
           <h2>Создать комнату</h2>
           <label class="field"><span>Название</span><input id="createRoomName" type="text" maxlength="42" placeholder="Кабинет реформ" /></label>
-          <label class="field"><span>Пароль (опционально)</span><input id="createRoomPassword" type="text" maxlength="30" placeholder="Пароль" /></label>
-          <label class="field"><span>Лимит игроков (до 20)</span><input id="createRoomMax" type="number" min="2" max="20" value="20" /></label>
-          <button id="createRoomBtn" class="btn primary">Создать</button>
+          <label class="field"><span>Пароль (опционально)</span><input id="createRoomPassword" type="text" maxlength="30" /></label>
+          <label class="field"><span>Лимит игроков</span><input id="createRoomMax" type="number" min="2" max="20" value="20" /></label>
+          <button id="createRoomBtn" class="btn primary">Создать комнату</button>
 
-          <h3>Войти по коду</h3>
-          <label class="field"><span>Код</span><input id="joinCodeInput" type="text" maxlength="12" placeholder="ABC123" /></label>
-          <label class="field"><span>Пароль</span><input id="joinPasswordInput" type="text" maxlength="30" placeholder="Если есть" /></label>
+          <h3>Вход по коду</h3>
+          <label class="field"><span>Код комнаты</span><input id="joinCodeInput" type="text" maxlength="12" placeholder="ABC123" /></label>
+          <label class="field"><span>Пароль</span><input id="joinPasswordInput" type="text" maxlength="30" /></label>
           <button id="joinByCodeBtn" class="btn">Подключиться</button>
         </div>
-
         <div>
           <h2>Открытые комнаты</h2>
           <div id="roomsList" class="room-list"></div>
@@ -66,7 +64,7 @@
 
     <section id="screen-room" class="screen">
       <div class="panel">
-        <div class="inline-row">
+        <div class="inline-row between">
           <h2 id="roomTitle">Комната</h2>
           <div class="inline-row">
             <span id="roomCodeBadge" class="pill"></span>
@@ -85,55 +83,71 @@
             <label class="field"><span>Закрыть комнату</span><input id="hostRoomLock" type="checkbox" /></label>
           </div>
           <div class="inline-row">
-            <button id="saveRoomSettingsBtn" class="btn">Сохранить настройки</button>
+            <button id="saveRoomSettingsBtn" class="btn">Сохранить</button>
             <button id="startGameBtn" class="btn danger">Начать матч</button>
           </div>
         </div>
 
-        <div class="inline-row">
-          <button id="leaveRoomBtn" class="btn">Выйти в лобби</button>
-        </div>
+        <button id="leaveRoomBtn" class="btn">Выйти в лобби</button>
       </div>
     </section>
 
     <section id="screen-game" class="screen">
       <div class="game-layout">
-        <div class="panel game-head">
+        <div class="panel">
           <div class="inline-row">
             <span id="dayBadge" class="pill"></span>
             <span id="phaseBadge" class="pill"></span>
             <span id="roleBadge" class="pill"></span>
           </div>
-          <div id="spyObjective" class="objective hidden"></div>
-          <div id="spyTeam" class="spy-team hidden"></div>
+          <div id="phaseHint" class="muted"></div>
         </div>
 
-        <div class="panel stats" id="statsGrid"></div>
+        <div class="panel" id="globalProblem"></div>
 
-        <div class="panel news-panel">
-          <h3>Новости</h3>
-          <div id="newsFeed" class="news-feed"></div>
+        <div class="panel" id="statsGrid"></div>
+
+        <div class="panel hidden" id="spyTeam"></div>
+        <div class="panel hidden" id="spyOrders"></div>
+
+        <div class="panel">
+          <div id="eventCard" class="card-note"></div>
+          <div id="storyCard" class="card-note"></div>
         </div>
 
-        <div class="panel action-panel">
-          <div id="eventCard" class="event-card"></div>
-          <div id="storyCard" class="story-card"></div>
-          <div id="dayResults" class="results-list"></div>
+        <div class="panel">
+          <div class="inline-row between">
+            <h3>Карточки решений</h3>
+            <button id="historyToggleBtn" class="btn tiny">История прошлых раундов</button>
+          </div>
           <div id="cardsBoard" class="cards-board"></div>
           <div id="phaseActions" class="inline-row"></div>
         </div>
 
-        <div class="panel players-panel">
-          <h3>Политики</h3>
-          <div id="playersForArrest" class="arrest-list"></div>
+        <div id="historyPanel" class="panel hidden">
+          <h3>История решений</h3>
+          <div id="historyList" class="history-list"></div>
         </div>
 
-        <div class="panel comms-panel">
+        <div class="panel">
+          <h3>Арест</h3>
+          <div class="inline-row">
+            <select id="arrestSelect"></select>
+            <button id="arrestVoteBtn" class="btn tiny">Голосовать</button>
+            <button id="arrestSkipBtn" class="btn tiny">Пропустить</button>
+          </div>
+          <div id="arrestStatus" class="muted"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Новости</h3>
+          <div id="newsFeed" class="news-feed"></div>
+        </div>
+
+        <div class="panel">
           <div class="inline-row">
             <button id="chatPublicTab" class="btn tiny primary">Общий чат</button>
             <button id="chatSpyTab" class="btn tiny">Шпионский чат</button>
-            <button id="micBtn" class="btn tiny">Микрофон: выкл</button>
-            <span id="voiceScopeBadge" class="pill">Голос: нет</span>
           </div>
           <div id="chatMessages" class="chat-messages"></div>
           <div class="inline-row">
@@ -147,7 +161,6 @@
     <div id="toast" class="toast hidden"></div>
   </main>
 
-  <div id="remoteAudios"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
 </body>
