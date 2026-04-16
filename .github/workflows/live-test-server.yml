@@ -1,0 +1,109 @@
+﻿name: Live Test Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "How many hours keep server alive (1-6)"
+        required: false
+        default: "4"
+
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Start app
+        run: |
+          nohup npm start > server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000 > /dev/null; then
+              echo "App is up"
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:3000 > /dev/null
+
+      - name: Install cloudflared
+        run: |
+          curl -L --fail --retry 3 https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+
+      - name: Start public tunnel
+        id: tunnel
+        run: |
+          nohup ./cloudflared tunnel --url http://127.0.0.1:3000 --no-autoupdate > tunnel.log 2>&1 &
+
+          URL=""
+          for i in {1..120}; do
+            if grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' tunnel.log | head -n1 > /tmp/url.txt; then
+              URL=$(cat /tmp/url.txt)
+              if [ -n "$URL" ]; then
+                break
+              fi
+            fi
+            sleep 1
+          done
+
+          if [ -z "$URL" ]; then
+            echo "Failed to obtain tunnel URL"
+            tail -n 200 tunnel.log || true
+            exit 1
+          fi
+
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "PUBLIC_URL=$URL" >> "$GITHUB_ENV"
+
+      - name: Print URL
+        run: |
+          echo "Public URL: $PUBLIC_URL"
+          {
+            echo "## Public URL"
+            echo ""
+            echo "$PUBLIC_URL"
+            echo ""
+            echo "Server is running in GitHub Actions runner."
+            echo "It will stay online until this workflow finishes."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep server alive
+        run: |
+          HOURS="${{ github.event.inputs.hours }}"
+          if ! [[ "$HOURS" =~ ^[1-6]$ ]]; then
+            HOURS=4
+          fi
+          SECONDS_TO_RUN=$((HOURS * 3600))
+          echo "Keeping live server for $HOURS hour(s)"
+
+          START=$(date +%s)
+          while true; do
+            NOW=$(date +%s)
+            ELAPSED=$((NOW - START))
+            if [ "$ELAPSED" -ge "$SECONDS_TO_RUN" ]; then
+              echo "Time is over. Stopping."
+              break
+            fi
+
+            if ! curl -fsS http://127.0.0.1:3000 > /dev/null; then
+              echo "App health check failed"
+              exit 1
+            fi
+
+            if ! grep -q 'trycloudflare.com' tunnel.log; then
+              echo "Tunnel log lost URL marker"
+            fi
+
+            sleep 30
+          done
