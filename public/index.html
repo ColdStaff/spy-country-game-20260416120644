@@ -104,7 +104,7 @@
         </section>
 
         <div class="game-main">
-          <section class="panel decisions-panel zone-decisions">
+          <section class="panel decisions-panel paper-sheet">
             <div class="inline-row between">
               <h2>Решения дня</h2>
               <div id="phaseActions" class="inline-row"></div>
@@ -113,32 +113,32 @@
           </section>
 
           <aside class="side-stack">
-            <details class="fold zone-state" open>
-              <summary>Состояние страны</summary>
+            <details class="fold dossier" open>
+              <summary>Государственная сводка</summary>
               <div class="fold-body">
                 <div id="globalProblem"></div>
                 <div id="statsGrid"></div>
               </div>
             </details>
 
-            <details class="fold zone-story">
-              <summary>Сюжет дня</summary>
+            <details class="fold dossier">
+              <summary>Доклад дня</summary>
               <div class="fold-body">
                 <div id="eventCard" class="card-note"></div>
                 <div id="storyCard" class="card-note"></div>
               </div>
             </details>
 
-            <details id="spyPanel" class="fold zone-spy hidden">
-              <summary>Шпионский блок</summary>
+            <details id="spyPanel" class="fold dossier hidden">
+              <summary>Секретное досье</summary>
               <div class="fold-body">
                 <div id="spyTeam"></div>
                 <div id="spyOrders"></div>
               </div>
             </details>
 
-            <details class="fold zone-arrest">
-              <summary>Арест</summary>
+            <details class="fold dossier">
+              <summary>Акт задержания</summary>
               <div class="fold-body">
                 <div class="inline-row wrap-gap">
                   <select id="arrestSelect"></select>
@@ -149,22 +149,22 @@
               </div>
             </details>
 
-            <details class="fold zone-news">
-              <summary>Новости</summary>
+            <details class="fold dossier">
+              <summary>Газетная вырезка</summary>
               <div class="fold-body">
                 <div id="newsFeed" class="news-feed"></div>
               </div>
             </details>
 
-            <details class="fold zone-history">
-              <summary>История раундов</summary>
+            <details class="fold dossier">
+              <summary>Архив протоколов</summary>
               <div class="fold-body">
                 <div id="historyList" class="history-list"></div>
               </div>
             </details>
 
-            <details class="fold zone-chat" open>
-              <summary>Чат</summary>
+            <details class="fold dossier" open>
+              <summary>Журнал связи</summary>
               <div class="fold-body">
                 <label class="field small-field">
                   <span>Канал</span>

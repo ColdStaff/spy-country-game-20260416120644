@@ -270,6 +270,214 @@ const CARDS = [
         delayed: []
       }
     ]
+  },
+  {
+    title: "Реформа образования",
+    description: "Падает качество подготовки кадров, бизнес и регионы требуют обновления системы.",
+    lore:
+      "Учителя ждут реального повышения оплаты, регионы просят инфраструктуру, а экономический блок считает каждый рубль. Ошибка сегодня проявится через несколько дней.",
+    options: [
+      {
+        label: "Срочно поднять зарплаты учителям",
+        publicText: "Мотивация преподавателей важнее всего в коротком горизонте.",
+        effects: { trust: 3, welfare: 2, economy: -3 },
+        delayed: [{ inDays: 2, effects: { birthRate: 1 }, news: "Рост стабильности в школах улучшил демографические ожидания семей.", tone: "good" }]
+      },
+      {
+        label: "Вложиться в цифровую инфраструктуру",
+        publicText: "Технологии дадут системе гибкость и охват отдаленных регионов.",
+        effects: { economy: 2, trust: 1, welfare: -1 },
+        delayed: [{ inDays: 1, effects: { trust: 1 }, news: "Первые регионы отчитались о запуске новых образовательных платформ.", tone: "good" }]
+      },
+      {
+        label: "Оставить текущее финансирование",
+        publicText: "Бюджет не потянет масштабную реформу прямо сейчас.",
+        effects: { economy: 1, trust: -3, welfare: -2 },
+        delayed: []
+      }
+    ]
+  },
+  {
+    title: "Водный кризис регионов",
+    description: "Несколько областей фиксируют нехватку воды и перебои в снабжении.",
+    lore:
+      "Промышленные лобби не хотят ограничений, экологи требуют экстренных мер, население ждет быстрых решений. Половинчатый вариант может ударить сразу по нескольким показателям.",
+    options: [
+      {
+        label: "Ограничить промышленные квоты",
+        publicText: "Сначала вода для населения, затем производство.",
+        effects: { ecology: 6, welfare: 2, economy: -4 },
+        delayed: []
+      },
+      {
+        label: "Запустить дорогие опреснительные проекты",
+        publicText: "Инфраструктура даст устойчивый эффект на годы вперед.",
+        effects: { ecology: 3, economy: -2, trust: 2 },
+        delayed: [{ inDays: 2, effects: { welfare: 2 }, news: "Новые мощности по воде частично сняли напряжение в городах.", tone: "good" }]
+      },
+      {
+        label: "Временный подвоз без реформ",
+        publicText: "Локально закрыть дефицит и не ломать отрасли.",
+        effects: { welfare: 1, economy: 1, ecology: -3 },
+        delayed: [{ inDays: 1, effects: { trust: -2 }, news: "Временные меры не решили проблему воды, регионы вновь требуют план.", tone: "bad" }]
+      }
+    ]
+  },
+  {
+    title: "Транспортный коридор",
+    description: "Стране предлагают крупный транзитный контракт с внешними партнерами.",
+    lore:
+      "Сделка обещает доходы и рабочие места, но требует уступок по контролю инфраструктуры. Внутри кабинета спорят о рисках зависимости.",
+    options: [
+      {
+        label: "Подписать соглашение в полном объеме",
+        publicText: "Быстрый приток инвестиций ускорит экономику.",
+        effects: { economy: 6, security: -3, trust: -1 },
+        delayed: [{ inDays: 2, effects: { welfare: 2 }, news: "Транзит дал дополнительные доходы для региональных бюджетов.", tone: "good" }]
+      },
+      {
+        label: "Подписать с жесткими условиями суверенного контроля",
+        publicText: "Рост торговли без потери стратегической самостоятельности.",
+        effects: { economy: 3, security: 2, trust: 1 },
+        delayed: []
+      },
+      {
+        label: "Отложить сделку на год",
+        publicText: "Сначала внутренний аудит и подготовка собственных мощностей.",
+        effects: { security: 2, trust: -1, economy: -2 },
+        delayed: []
+      }
+    ]
+  },
+  {
+    title: "Судебная перезагрузка",
+    description: "Общество требует очистки судебной системы после ряда скандалов.",
+    lore:
+      "Радикальные шаги могут обрушить управляемость на местах, но медленные реформы воспринимаются как имитация. Нужно выбрать темп и глубину изменений.",
+    options: [
+      {
+        label: "Массовая переаттестация судей",
+        publicText: "Жесткая проверка вернет доверие к институтам.",
+        effects: { trust: 5, security: -2, welfare: -1 },
+        delayed: [{ inDays: 1, effects: { security: -1 }, news: "Перегрузка судебной системы вызвала задержки по ключевым делам.", tone: "neutral" }]
+      },
+      {
+        label: "Пошаговая реформа с общественным контролем",
+        publicText: "Стабильный переход без управленческого шока.",
+        effects: { trust: 3, security: 1, economy: 1 },
+        delayed: []
+      },
+      {
+        label: "Сохранить текущую модель",
+        publicText: "Сейчас стране нужен порядок, а не системный эксперимент.",
+        effects: { security: 2, trust: -4 },
+        delayed: []
+      }
+    ]
+  },
+  {
+    title: "Курс национальной валюты",
+    description: "Резкие колебания курса бьют по ценам и импортным поставкам.",
+    lore:
+      "Центробанк и кабинет не сходятся в приоритетах: стабилизировать рынок любой ценой или поддержать экспорт и бюджетные доходы.",
+    options: [
+      {
+        label: "Жесткая валютная интервенция",
+        publicText: "Стабильный курс снизит инфляционные ожидания граждан.",
+        effects: { trust: 3, welfare: 2, economy: -3 },
+        delayed: []
+      },
+      {
+        label: "Умеренный плавающий курс",
+        publicText: "Баланс между стабильностью и конкурентоспособностью экспорта.",
+        effects: { economy: 2, trust: 1, welfare: 1 },
+        delayed: []
+      },
+      {
+        label: "Ослабить валюту ради экспорта",
+        publicText: "Экспортерам нужен стимул для роста выручки.",
+        effects: { economy: 4, welfare: -3, trust: -2 },
+        delayed: [{ inDays: 1, effects: { birthRate: -1 }, news: "Рост цен на импорт усилил потребительскую тревожность.", tone: "bad" }]
+      }
+    ]
+  },
+  {
+    title: "Резерв медицины",
+    description: "Система здравоохранения просит дополнительные резервы на случай вспышек заболеваний.",
+    lore:
+      "Минфин настаивает на экономии, медики говорят о риске коллапса в регионах. Политическое решение скажется и на доверии, и на бюджете.",
+    options: [
+      {
+        label: "Создать крупный медрезерв сейчас",
+        publicText: "Профилактика дешевле системного кризиса здравоохранения.",
+        effects: { welfare: 5, trust: 3, economy: -4 },
+        delayed: []
+      },
+      {
+        label: "Точечный резерв для групп риска",
+        publicText: "Адресная модель удержит баланс расходов и эффекта.",
+        effects: { welfare: 2, trust: 2, economy: -1 },
+        delayed: []
+      },
+      {
+        label: "Перенести программу на следующий квартал",
+        publicText: "Сначала закрыть текущие бюджетные дыры.",
+        effects: { economy: 2, welfare: -3, trust: -2 },
+        delayed: [{ inDays: 2, effects: { security: -2 }, news: "Локальные вспышки болезней перегрузили региональные больницы.", tone: "bad" }]
+      }
+    ]
+  },
+  {
+    title: "Рынок аренды жилья",
+    description: "Арендные ставки выросли до уровня, который ударил по молодым семьям.",
+    lore:
+      "Собственники требуют защиты доходов, арендаторы выходят на протесты, регионы боятся оттока специалистов. Нужен политический компромисс.",
+    options: [
+      {
+        label: "Ввести потолок роста арендных ставок",
+        publicText: "Социальная стабилизация важнее рыночной сверхприбыли.",
+        effects: { welfare: 4, trust: 3, economy: -2 },
+        delayed: [{ inDays: 1, effects: { economy: -1 }, news: "Часть инвесторов отложила запуск новых жилых проектов.", tone: "neutral" }]
+      },
+      {
+        label: "Субсидировать аренду для молодых семей",
+        publicText: "Точечная помощь без прямого давления на рынок.",
+        effects: { welfare: 3, birthRate: 2, economy: -2 },
+        delayed: []
+      },
+      {
+        label: "Не вмешиваться в цены",
+        publicText: "Рынок должен сам найти равновесие без ручного управления.",
+        effects: { economy: 2, welfare: -4, trust: -3 },
+        delayed: []
+      }
+    ]
+  },
+  {
+    title: "Муниципальная автономия",
+    description: "Регионы требуют больше полномочий и собственных бюджетных инструментов.",
+    lore:
+      "Центр опасается распада управляемости, но давление на местах растет. Решение повлияет на безопасность, доверие и скорость локальных реформ.",
+    options: [
+      {
+        label: "Передать регионам расширенные полномочия",
+        publicText: "Местные власти быстрее решают реальные проблемы территорий.",
+        effects: { trust: 4, welfare: 2, security: -3 },
+        delayed: [{ inDays: 2, effects: { economy: 1 }, news: "Ряд регионов ускорил запуск локальных проектов развития.", tone: "good" }]
+      },
+      {
+        label: "Пилот в нескольких областях",
+        publicText: "Ограниченный эксперимент без потери федерального контроля.",
+        effects: { trust: 2, security: 1, economy: 1 },
+        delayed: []
+      },
+      {
+        label: "Сохранить жесткую централизацию",
+        publicText: "Единое управление снижает риск политического распада.",
+        effects: { security: 3, trust: -3, welfare: -1 },
+        delayed: []
+      }
+    ]
   }
 ];
 
@@ -324,7 +532,7 @@ function makeAvatar(input) {
     hairStyle: ["short", "long", "curly", "bald"],
     hairColor: ["#1E1E25", "#5E3A1C", "#8B5A2B", "#A58D73", "#6A1E1E"],
     outfitColor: ["#5DA9E9", "#66C2A5", "#E07A5F", "#B56576", "#9D4EDD", "#F2C14E"],
-    bgColor: ["#2D4059", "#4C3B4D", "#2C666E", "#594545", "#285943", "#5C3C92"]
+    bgColor: ["#2D4059", "#4C3B4D", "#2C666E", "#594545", "#285943", "#5A6878"]
   };
   return {
     skin: allowed.skin.includes(a.skin) ? a.skin : allowed.skin[0],
@@ -359,8 +567,18 @@ function aliveIds(room) {
   if (!room.game || room.game.status !== "running") return [...room.players.keys()];
   return [...room.players.keys()].filter((id) => !room.game.removed.has(id));
 }
-function buildCards() {
-  return shuffle(CARDS).slice(0, 3).map((card) => ({
+function buildCards(game) {
+  const recent = new Set((game && game.recentCardTitles) || []);
+  let pool = CARDS.filter((card) => !recent.has(card.title));
+  if (pool.length < 3) pool = CARDS;
+
+  const picked = shuffle(pool).slice(0, 3);
+  if (game) {
+    const titles = picked.map((c) => c.title);
+    game.recentCardTitles = [...(game.recentCardTitles || []), ...titles].slice(-6);
+  }
+
+  return picked.map((card) => ({
     id: crypto.randomUUID(),
     title: card.title,
     description: card.description,
@@ -495,6 +713,7 @@ function createGame(room) {
     results: [],
     history: [],
     spyOrders: [],
+    recentCardTitles: [],
     globalProblem: createGlobalProblem(),
     winner: null
   };
@@ -604,7 +823,7 @@ function startDay(room) {
   if (collapsed(g.stats)) return finish(room, "spies");
 
   g.phase = "day";
-  g.cards = buildCards();
+  g.cards = buildCards(g);
   g.votes = Object.fromEntries(g.cards.map((c) => [c.id, {}]));
   g.arrests = {};
   g.results = [];

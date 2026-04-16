@@ -376,11 +376,12 @@ function renderCards(room, game) {
   const totalAlive = game.aliveCount || room.players.length;
 
   el.cardsBoard.innerHTML = game.cards
-    .map((card) => {
+    .map((card, index) => {
       const myVote = game.myVotes[card.id];
       const progress = game.voteProgress?.[card.id] || 0;
 
       return `<div class="card-item">
+        <div class="muted"><b>Бланк решения №${index + 1}</b></div>
         <b>${escapeHtml(card.title)}</b>
         <div class="muted card-meta">${escapeHtml(card.description)}</div>
         <div class="muted">Проголосовало: ${progress}/${totalAlive}</div>
