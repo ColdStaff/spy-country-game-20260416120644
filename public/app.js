@@ -124,6 +124,12 @@ const el = {
   chatInput: document.getElementById("chatInput"),
   sendChatBtn: document.getElementById("sendChatBtn"),
 
+  endingOverlay: document.getElementById("endingOverlay"),
+  endingTitle: document.getElementById("endingTitle"),
+  endingWinner: document.getElementById("endingWinner"),
+  endingConclusion: document.getElementById("endingConclusion"),
+  endingLore: document.getElementById("endingLore"),
+
   toast: document.getElementById("toast")
 };
 
@@ -175,6 +181,10 @@ function setScreen(name) {
   document.body.classList.remove("screen-auth", "screen-lobby", "screen-room", "screen-game");
   document.body.classList.add(`screen-${name}`);
   document.body.classList.toggle("in-game", name === "game");
+  if (name !== "game") {
+    el.endingOverlay.classList.add("hidden");
+    el.endingOverlay.classList.remove("visible");
+  }
 }
 
 function renderAvatarPreview() {
@@ -428,6 +438,39 @@ function renderNews(game) {
     .join("");
 }
 
+function loreMarkup(text) {
+  return String(text || "")
+    .split(/\n{2,}/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => `<p>${escapeHtml(part)}</p>`)
+    .join("");
+}
+
+function renderEndingOverlay(game) {
+  if (game.status !== "ended") {
+    el.endingOverlay.classList.add("hidden");
+    el.endingOverlay.classList.remove("visible");
+    return;
+  }
+
+  const ending = game.ending || {};
+  const winnerText = game.winner === "spies" ? "Шпионы победили" : "Политики победили";
+  const winnerClass = game.winner === "spies" ? "win-spies" : "win-citizens";
+
+  el.endingTitle.textContent = ending.headline || "Матч завершен";
+  el.endingWinner.textContent = winnerText;
+  el.endingWinner.classList.remove("win-spies", "win-citizens");
+  el.endingWinner.classList.add(winnerClass);
+  el.endingConclusion.textContent = ending.conclusion || "Финал партии подведен.";
+  el.endingLore.innerHTML = loreMarkup(ending.lore || "История матча завершена.");
+
+  el.endingOverlay.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    el.endingOverlay.classList.add("visible");
+  });
+}
+
 function renderPhaseActions(game) {
   el.phaseActions.innerHTML = "";
 
@@ -503,6 +546,7 @@ function renderGame() {
   renderPhaseActions(game);
   renderNews(game);
   renderHistory(game);
+  renderEndingOverlay(game);
 
   syncChatScopeControl(game);
   renderChat();

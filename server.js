@@ -7,7 +7,6 @@ const { Server } = require("socket.io");
 
 const PORT = process.env.PORT || 3000;
 const MIN_PLAYERS = 3;
-const MAX_NEWS = 140;
 const MAX_HISTORY = 20;
 
 const app = express();
@@ -522,7 +521,81 @@ function effectsSummary(effects) {
 }
 function news(game, message, tone = "neutral") {
   game.news.unshift({ id: crypto.randomUUID(), day: game.day, text: message, tone, at: Date.now() });
-  if (game.news.length > MAX_NEWS) game.news.length = MAX_NEWS;
+}
+
+function statsRanking(stats, order = "desc") {
+  const factor = order === "asc" ? 1 : -1;
+  return STAT_KEYS.map((key) => ({ key, value: stats[key], label: statLabel(key) })).sort((a, b) => factor * (a.value - b.value));
+}
+
+function endingDecisionLines(history) {
+  const rounds = [...history].slice(0, 4).reverse();
+  const lines = [];
+  for (const round of rounds) {
+    const card = round.cards?.[0];
+    if (!card) continue;
+    lines.push(`День ${round.day}: по вопросу «${card.cardTitle}» кабинет утвердил «${card.winnerLabel}».`);
+  }
+  return lines;
+}
+
+function buildEndingLore(game, winner) {
+  const highs = statsRanking(game.stats, "desc").slice(0, 2);
+  const lows = statsRanking(game.stats, "asc").slice(0, 2);
+  const totalRounds = game.history.length;
+  const sabotageTotal = game.history.reduce((sum, round) => sum + (round.sabotageSuccess || 0), 0);
+  const sabotageRatio = totalRounds ? sabotageTotal / (totalRounds * 3) : 0;
+  const decisionLines = endingDecisionLines(game.history);
+  const global = game.globalProblem;
+
+  const bestStats = highs.map((s) => `${s.label} ${s.value}`).join(", ");
+  const weakStats = lows.map((s) => `${s.label} ${s.value}`).join(", ");
+  const sabotageText =
+    sabotageRatio >= 0.66
+      ? "Шпионская сеть почти каждый цикл проводила нужные ей решения, и внутренние механизмы страны системно рассыпались."
+      : sabotageRatio >= 0.4
+        ? "Шпионы регулярно вмешивались в курс реформ, создавая цепочку управленческих перекосов и взаимных блокировок."
+        : "Большинство диверсий было вовремя сорвано, и кабинет удержал управление даже в фазах высокого давления.";
+
+  const globalText = global
+    ? global.failed
+      ? `Глобальная проблема «${global.title}» была провалена, что стало точкой невозврата для системы.`
+      : global.resolved
+        ? `Глобальная проблема «${global.title}» была закрыта политиками до критического срока.`
+        : `Глобальная проблема «${global.title}» осталась частично нерешенной и продолжила давить на систему.`
+    : "";
+
+  const decisionsText = decisionLines.length ? `Ключевые развилки партии: ${decisionLines.join(" ")}` : "";
+
+  if (winner === "spies") {
+    return {
+      headline: "Победа шпионов",
+      conclusion: "Иностранные агенты добились стратегического развала институтов.",
+      lore: [
+        "К финалу партии государство не выдержало накопленного давления: локальные просчеты сложились в единый кризис управления.",
+        sabotageText,
+        `Слабые контуры к концу матча: ${weakStats}.`,
+        globalText,
+        decisionsText
+      ]
+        .filter(Boolean)
+        .join("\n\n")
+    };
+  }
+
+  return {
+    headline: "Победа политиков",
+    conclusion: "Шпионская сеть раскрыта, курс страны удержан.",
+    lore: [
+      "Политики сохранили управляемость и не дали внешнему сценарию довести страну до обрушения.",
+      sabotageText,
+      `Сильные контуры к концу матча: ${bestStats}.`,
+      globalText,
+      decisionsText
+    ]
+      .filter(Boolean)
+      .join("\n\n")
+  };
 }
 
 function makeAvatar(input) {
@@ -715,6 +788,7 @@ function createGame(room) {
     spyOrders: [],
     recentCardTitles: [],
     globalProblem: createGlobalProblem(),
+    ending: null,
     winner: null
   };
 }
@@ -751,6 +825,7 @@ function finish(room, winner) {
   game.status = "ended";
   game.phase = "ended";
   game.winner = winner;
+  game.ending = buildEndingLore(game, winner);
   news(game, winner === "spies" ? "Страна вошла в системный кризис. Шпионы победили." : "Шпионская сеть раскрыта. Политики удержали страну.", winner === "spies" ? "bad" : "good");
 }
 
@@ -1043,6 +1118,7 @@ function snapshot(room, viewer) {
     news: g.news,
     results: g.results,
     history: g.history,
+    ending: g.ending ? { ...g.ending } : null,
     winner: g.winner,
     pendingReveal: g.pendingReveal ? { ...g.pendingReveal } : null
   };
