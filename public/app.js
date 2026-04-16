@@ -171,6 +171,8 @@ function setScreen(name) {
     node.classList.toggle("visible", id === name);
   });
 
+  document.body.classList.remove("screen-auth", "screen-lobby", "screen-room", "screen-game");
+  document.body.classList.add(`screen-${name}`);
   document.body.classList.toggle("in-game", name === "game");
 }
 
@@ -392,8 +394,11 @@ function renderCards(room, game) {
           ${card.options
             .map(
               (o) => `<button class="card-option ${myVote === o.id ? "voted" : ""}" data-vote-card="${card.id}" data-vote-option="${o.id}" ${!canVoteCards ? "disabled" : ""}>
-                <b>${escapeHtml(o.label)}</b>
-                <div class="muted">${escapeHtml(o.publicText)}</div>
+                <span class="option-check" aria-hidden="true"></span>
+                <span class="option-text">
+                  <b>${escapeHtml(o.label)}</b>
+                  <span class="muted">${escapeHtml(o.publicText)}</span>
+                </span>
               </button>`
             )
             .join("")}
