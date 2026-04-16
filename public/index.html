@@ -104,7 +104,7 @@
         </section>
 
         <div class="game-main">
-          <section class="panel decisions-panel">
+          <section class="panel decisions-panel zone-decisions">
             <div class="inline-row between">
               <h2>Решения дня</h2>
               <div id="phaseActions" class="inline-row"></div>
@@ -113,7 +113,7 @@
           </section>
 
           <aside class="side-stack">
-            <details class="fold" open>
+            <details class="fold zone-state" open>
               <summary>Состояние страны</summary>
               <div class="fold-body">
                 <div id="globalProblem"></div>
@@ -121,7 +121,7 @@
               </div>
             </details>
 
-            <details class="fold">
+            <details class="fold zone-story">
               <summary>Сюжет дня</summary>
               <div class="fold-body">
                 <div id="eventCard" class="card-note"></div>
@@ -129,7 +129,7 @@
               </div>
             </details>
 
-            <details id="spyPanel" class="fold hidden">
+            <details id="spyPanel" class="fold zone-spy hidden">
               <summary>Шпионский блок</summary>
               <div class="fold-body">
                 <div id="spyTeam"></div>
@@ -137,7 +137,7 @@
               </div>
             </details>
 
-            <details class="fold">
+            <details class="fold zone-arrest">
               <summary>Арест</summary>
               <div class="fold-body">
                 <div class="inline-row wrap-gap">
@@ -149,21 +149,21 @@
               </div>
             </details>
 
-            <details class="fold">
+            <details class="fold zone-news">
               <summary>Новости</summary>
               <div class="fold-body">
                 <div id="newsFeed" class="news-feed"></div>
               </div>
             </details>
 
-            <details class="fold">
+            <details class="fold zone-history">
               <summary>История раундов</summary>
               <div class="fold-body">
                 <div id="historyList" class="history-list"></div>
               </div>
             </details>
 
-            <details class="fold" open>
+            <details class="fold zone-chat" open>
               <summary>Чат</summary>
               <div class="fold-body">
                 <label class="field small-field">

@@ -264,26 +264,35 @@ select:focus {
   min-height: 420px;
 }
 
+.zone-decisions {
+  border-color: #5e6978;
+  background: rgba(31, 37, 46, 0.9);
+}
+
 .side-stack {
   display: grid;
   gap: 10px;
 }
 
 .fold {
+  --zone-accent: #7a8696;
+  --zone-surface: rgba(27, 35, 46, 0.82);
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(22, 30, 41, 0.82);
+  background: var(--zone-surface);
   overflow: hidden;
 }
 
 .fold summary {
   list-style: none;
   cursor: pointer;
-  padding: 10px 12px;
+  padding: 10px 12px 10px 10px;
   font-weight: 700;
   color: #dfe8f1;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--zone-accent);
   position: relative;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .fold summary::-webkit-details-marker {
@@ -295,7 +304,7 @@ select:focus {
   position: absolute;
   right: 12px;
   top: 10px;
-  color: var(--accent);
+  color: var(--zone-accent);
   font-weight: 700;
 }
 
@@ -307,6 +316,42 @@ select:focus {
   padding: 10px;
   display: grid;
   gap: 9px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.05));
+}
+
+.zone-state {
+  --zone-accent: #87986f;
+  --zone-surface: rgba(39, 46, 37, 0.82);
+}
+
+.zone-story {
+  --zone-accent: #9a866e;
+  --zone-surface: rgba(45, 40, 35, 0.82);
+}
+
+.zone-spy {
+  --zone-accent: #8a6f7b;
+  --zone-surface: rgba(45, 35, 41, 0.82);
+}
+
+.zone-arrest {
+  --zone-accent: #987b66;
+  --zone-surface: rgba(47, 40, 33, 0.82);
+}
+
+.zone-news {
+  --zone-accent: #738692;
+  --zone-surface: rgba(33, 41, 48, 0.82);
+}
+
+.zone-history {
+  --zone-accent: #857b82;
+  --zone-surface: rgba(41, 37, 42, 0.82);
+}
+
+.zone-chat {
+  --zone-accent: #6e857d;
+  --zone-surface: rgba(31, 42, 39, 0.82);
 }
 
 #globalProblem,
@@ -340,7 +385,7 @@ select:focus {
 .bar > span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-strong), var(--accent));
+  background: linear-gradient(90deg, #778290, #9aa6b4);
 }
 
 .card-note {
@@ -406,6 +451,30 @@ select:focus {
   cursor: pointer;
 }
 
+.zone-decisions .card-item {
+  border-color: #5a6370;
+  background: rgba(38, 44, 54, 0.9);
+}
+
+.zone-decisions .card-option {
+  border-color: #596377;
+  background: #212a36;
+}
+
+.zone-decisions .card-option:hover {
+  border-color: #7a8698;
+  background: #2c3747;
+}
+
+.zone-decisions .card-option.voted {
+  border-color: #8b9277;
+  background: rgba(139, 146, 119, 0.18);
+}
+
+.zone-state .bar > span {
+  background: linear-gradient(90deg, #6f7f64, #8fa07b);
+}
+
 .card-option:hover {
   border-color: #5c7897;
   background: #253347;
@@ -424,7 +493,7 @@ select:focus {
 }
 
 .news-item {
-  border-left: 3px solid #6f95b1;
+  border-left: 3px solid #7f8b96;
   background: rgba(35, 48, 65, 0.8);
   border-radius: 8px;
   padding: 7px;
