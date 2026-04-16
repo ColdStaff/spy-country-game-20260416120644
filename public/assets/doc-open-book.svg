@@ -1,52 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
   <defs>
-    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#5f6f80"/>
-      <stop offset="1" stop-color="#445563"/>
+    <linearGradient id="pageL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e5ded1"/>
+      <stop offset="1" stop-color="#f2ecdf"/>
     </linearGradient>
-    <linearGradient id="paperL" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#e3dccf"/>
-      <stop offset="1" stop-color="#f0eadd"/>
-    </linearGradient>
-    <linearGradient id="paperR" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#f2ece0"/>
-      <stop offset="1" stop-color="#dfd6c5"/>
+    <linearGradient id="pageR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f1ece2"/>
+      <stop offset="1" stop-color="#ddd6c8"/>
     </linearGradient>
     <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="5"/>
       <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer>
-        <feFuncA type="table" tableValues="0 0.06"/>
-      </feComponentTransfer>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer>
     </filter>
   </defs>
 
-  <rect x="80" y="90" width="1240" height="660" rx="26" fill="url(#cover)"/>
-  <rect x="124" y="126" width="552" height="588" rx="16" fill="url(#paperL)"/>
-  <rect x="724" y="126" width="552" height="588" rx="16" fill="url(#paperR)"/>
+  <rect x="0" y="0" width="1400" height="840" fill="#e9e2d6"/>
+  <rect x="20" y="20" width="660" height="800" rx="14" fill="url(#pageL)"/>
+  <rect x="720" y="20" width="660" height="800" rx="14" fill="url(#pageR)"/>
+  <rect x="684" y="20" width="32" height="800" fill="#b6aa98"/>
+  <rect x="696" y="20" width="8" height="800" fill="#f6f0e2" opacity="0.55"/>
 
-  <rect x="688" y="126" width="24" height="588" fill="#7f7668"/>
-  <rect x="696" y="126" width="8" height="588" fill="#e6ddcc" opacity="0.45"/>
+  <g stroke="#a59a8a" stroke-width="1" opacity="0.38">
+    <line x1="56" y1="124" x2="648" y2="124"/>
+    <line x1="56" y1="172" x2="648" y2="172"/>
+    <line x1="56" y1="220" x2="648" y2="220"/>
+    <line x1="56" y1="268" x2="648" y2="268"/>
+    <line x1="56" y1="316" x2="648" y2="316"/>
+    <line x1="56" y1="364" x2="648" y2="364"/>
+    <line x1="56" y1="412" x2="648" y2="412"/>
+    <line x1="56" y1="460" x2="648" y2="460"/>
+    <line x1="56" y1="508" x2="648" y2="508"/>
+    <line x1="56" y1="556" x2="648" y2="556"/>
+    <line x1="56" y1="604" x2="648" y2="604"/>
+    <line x1="56" y1="652" x2="648" y2="652"/>
 
-  <g stroke="#a89f90" stroke-width="1" opacity="0.45">
-    <line x1="150" y1="190" x2="650" y2="190"/>
-    <line x1="150" y1="238" x2="650" y2="238"/>
-    <line x1="150" y1="286" x2="650" y2="286"/>
-    <line x1="150" y1="334" x2="650" y2="334"/>
-    <line x1="150" y1="382" x2="650" y2="382"/>
-    <line x1="150" y1="430" x2="650" y2="430"/>
-    <line x1="150" y1="478" x2="650" y2="478"/>
-    <line x1="150" y1="526" x2="650" y2="526"/>
-
-    <line x1="750" y1="190" x2="1250" y2="190"/>
-    <line x1="750" y1="238" x2="1250" y2="238"/>
-    <line x1="750" y1="286" x2="1250" y2="286"/>
-    <line x1="750" y1="334" x2="1250" y2="334"/>
-    <line x1="750" y1="382" x2="1250" y2="382"/>
-    <line x1="750" y1="430" x2="1250" y2="430"/>
-    <line x1="750" y1="478" x2="1250" y2="478"/>
-    <line x1="750" y1="526" x2="1250" y2="526"/>
+    <line x1="752" y1="124" x2="1344" y2="124"/>
+    <line x1="752" y1="172" x2="1344" y2="172"/>
+    <line x1="752" y1="220" x2="1344" y2="220"/>
+    <line x1="752" y1="268" x2="1344" y2="268"/>
+    <line x1="752" y1="316" x2="1344" y2="316"/>
+    <line x1="752" y1="364" x2="1344" y2="364"/>
+    <line x1="752" y1="412" x2="1344" y2="412"/>
+    <line x1="752" y1="460" x2="1344" y2="460"/>
+    <line x1="752" y1="508" x2="1344" y2="508"/>
+    <line x1="752" y1="556" x2="1344" y2="556"/>
+    <line x1="752" y1="604" x2="1344" y2="604"/>
+    <line x1="752" y1="652" x2="1344" y2="652"/>
   </g>
 
-  <rect x="124" y="126" width="1152" height="588" rx="16" filter="url(#grain)"/>
+  <rect x="0" y="0" width="1400" height="840" filter="url(#grain)"/>
 </svg>

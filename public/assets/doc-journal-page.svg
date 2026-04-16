@@ -1,31 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
   <defs>
-    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#edf1f4"/>
-      <stop offset="1" stop-color="#d8e0e8"/>
-    </linearGradient>
-    <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="1.0" numOctaves="3" seed="21"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer>
-    </filter>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#edf2f6"/><stop offset="1" stop-color="#d8e0e8"/></linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="1.0" numOctaves="3" seed="20"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer></filter>
   </defs>
 
-  <rect x="130" y="110" width="1140" height="620" rx="14" fill="url(#paper)" stroke="#a4b2c1" stroke-width="3"/>
-  <line x1="230" y1="110" x2="230" y2="730" stroke="#c78585" stroke-width="3" opacity="0.55"/>
+  <rect width="1400" height="840" fill="url(#page)"/>
+  <line x1="224" y1="0" x2="224" y2="840" stroke="#c88888" stroke-width="3" opacity="0.55"/>
 
-  <g stroke="#89a9c9" stroke-width="2" opacity="0.36">
-    <line x1="250" y1="190" x2="1230" y2="190"/>
-    <line x1="250" y1="236" x2="1230" y2="236"/>
-    <line x1="250" y1="282" x2="1230" y2="282"/>
-    <line x1="250" y1="328" x2="1230" y2="328"/>
-    <line x1="250" y1="374" x2="1230" y2="374"/>
-    <line x1="250" y1="420" x2="1230" y2="420"/>
-    <line x1="250" y1="466" x2="1230" y2="466"/>
-    <line x1="250" y1="512" x2="1230" y2="512"/>
-    <line x1="250" y1="558" x2="1230" y2="558"/>
-    <line x1="250" y1="604" x2="1230" y2="604"/>
+  <g stroke="#86a7ca" stroke-width="2" opacity="0.36">
+    <line x1="248" y1="112" x2="1356" y2="112"/>
+    <line x1="248" y1="160" x2="1356" y2="160"/>
+    <line x1="248" y1="208" x2="1356" y2="208"/>
+    <line x1="248" y1="256" x2="1356" y2="256"/>
+    <line x1="248" y1="304" x2="1356" y2="304"/>
+    <line x1="248" y1="352" x2="1356" y2="352"/>
+    <line x1="248" y1="400" x2="1356" y2="400"/>
+    <line x1="248" y1="448" x2="1356" y2="448"/>
+    <line x1="248" y1="496" x2="1356" y2="496"/>
+    <line x1="248" y1="544" x2="1356" y2="544"/>
+    <line x1="248" y1="592" x2="1356" y2="592"/>
+    <line x1="248" y1="640" x2="1356" y2="640"/>
+    <line x1="248" y1="688" x2="1356" y2="688"/>
+    <line x1="248" y1="736" x2="1356" y2="736"/>
   </g>
 
-  <rect x="130" y="110" width="1140" height="620" filter="url(#grain)"/>
+  <rect width="1400" height="840" filter="url(#grain)"/>
 </svg>

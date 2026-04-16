@@ -290,8 +290,8 @@ select:focus {
   color: var(--ink);
   border-color: #9ea5ac;
   background:
-    linear-gradient(rgba(18, 22, 28, 0.16), rgba(18, 22, 28, 0.16)),
-    url("assets/form-blank-crumpled.svg") center / cover no-repeat;
+    url("assets/form-blank-crumpled.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ebe6dc, #ddd7ca);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   box-shadow: 0 12px 28px rgba(8, 10, 12, 0.34);
@@ -337,9 +337,11 @@ select:focus {
   border: 0;
   border-bottom: 1px solid rgba(113, 123, 137, 0.52);
   border-radius: 0;
-  background: transparent;
+  background:
+    url("assets/doc-form-sheet.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, rgba(247, 245, 239, 0.86), rgba(235, 231, 223, 0.86));
   padding: 8px 4px 10px;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(31, 37, 46, 0.1);
 }
 
 .paper-sheet .card-options {
@@ -350,7 +352,7 @@ select:focus {
   border: 0;
   border-bottom: 1px dashed rgba(122, 135, 151, 0.62);
   border-radius: 0;
-  background: transparent;
+  background: rgba(250, 249, 245, 0.4);
   color: #212c39;
   text-align: left;
   padding: 6px 2px;
@@ -363,12 +365,12 @@ select:focus {
 
 .paper-sheet .card-option:hover {
   border-bottom-color: #6787ab;
-  background: rgba(231, 239, 248, 0.32);
+  background: rgba(231, 239, 248, 0.45);
 }
 
 .paper-sheet .card-option.voted {
   border-bottom-color: #4f77a1;
-  background: rgba(220, 233, 248, 0.44);
+  background: rgba(220, 233, 248, 0.62);
 }
 
 .option-check {
@@ -545,10 +547,9 @@ select:focus {
 
 .doc-book .fold-body {
   min-height: 280px;
-  background-color: #e3ddd0;
   background:
-    linear-gradient(rgba(21, 24, 30, 0.1), rgba(21, 24, 30, 0.1)),
-    url("assets/doc-open-book.svg") center / cover no-repeat;
+    url("assets/doc-open-book.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ebe5d8, #ddd6c7);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -557,10 +558,9 @@ select:focus {
 
 .doc-report .fold-body {
   min-height: 240px;
-  background-color: #e2ddd3;
   background:
-    linear-gradient(rgba(21, 24, 30, 0.11), rgba(21, 24, 30, 0.11)),
-    url("assets/doc-report-sheet.svg") center / cover no-repeat;
+    url("assets/doc-report-sheet.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ece9e3, #ded9cf);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -569,10 +569,9 @@ select:focus {
 
 .doc-secret .fold-body {
   min-height: 250px;
-  background-color: #e1dbe1;
   background:
-    linear-gradient(rgba(25, 20, 24, 0.15), rgba(25, 20, 24, 0.15)),
-    url("assets/doc-secret-file.svg") center / cover no-repeat;
+    url("assets/doc-secret-file.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ece7ea, #dfd7df);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -581,10 +580,9 @@ select:focus {
 
 .doc-form .fold-body {
   min-height: 220px;
-  background-color: #dfddd7;
   background:
-    linear-gradient(rgba(20, 24, 29, 0.11), rgba(20, 24, 29, 0.11)),
-    url("assets/doc-form-sheet.svg") center / cover no-repeat;
+    url("assets/doc-form-sheet.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ece9e3, #dfddd7);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -594,10 +592,9 @@ select:focus {
 
 .doc-newspaper .fold-body {
   min-height: 300px;
-  background-color: #d1d2d4;
   background:
-    linear-gradient(rgba(17, 18, 20, 0.08), rgba(17, 18, 20, 0.08)),
-    url("assets/doc-newspaper-cutout.svg") center / cover no-repeat;
+    url("assets/doc-newspaper-cutout.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #dfdfe2, #cdced1);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -638,10 +635,9 @@ select:focus {
 
 .doc-archive .fold-body {
   min-height: 230px;
-  background-color: #cbbca4;
   background:
-    linear-gradient(rgba(28, 23, 17, 0.12), rgba(28, 23, 17, 0.12)),
-    url("assets/doc-archive-card.svg") center / cover no-repeat;
+    url("assets/doc-archive-card.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #ddcfb9, #ccbca2);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;
@@ -650,10 +646,9 @@ select:focus {
 
 .doc-journal .fold-body {
   min-height: 260px;
-  background-color: #d8e0e8;
   background:
-    linear-gradient(rgba(20, 24, 29, 0.1), rgba(20, 24, 29, 0.1)),
-    url("assets/doc-journal-page.svg") center / cover no-repeat;
+    url("assets/doc-journal-page.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #e3eaf2, #d4dee8);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   border-color: transparent;

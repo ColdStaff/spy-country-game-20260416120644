@@ -1,24 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
   <defs>
     <linearGradient id="sheet" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#efece6"/>
-      <stop offset="1" stop-color="#ddd9cf"/>
+      <stop offset="0" stop-color="#efebe4"/>
+      <stop offset="1" stop-color="#ddd7cd"/>
     </linearGradient>
-    <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="17"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer>
-    </filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="1.0" numOctaves="3" seed="9"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer></filter>
   </defs>
 
-  <path d="M160 120 L1210 120 L1268 190 L1240 730 L184 730 L130 668 L160 120 Z" fill="url(#sheet)" stroke="#a7a49b" stroke-width="4"/>
-  <rect x="218" y="186" width="966" height="58" fill="#d8d5cf" opacity="0.62"/>
-  <line x1="218" y1="264" x2="1184" y2="264" stroke="#9a9996" stroke-width="2" opacity="0.45"/>
-  <line x1="218" y1="318" x2="1184" y2="318" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <line x1="218" y1="372" x2="1184" y2="372" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <line x1="218" y1="426" x2="1184" y2="426" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <line x1="218" y1="480" x2="1184" y2="480" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <line x1="218" y1="534" x2="1184" y2="534" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <line x1="218" y1="588" x2="1184" y2="588" stroke="#a2a09b" stroke-width="2" opacity="0.4"/>
-  <rect x="160" y="120" width="1108" height="610" filter="url(#grain)"/>
+  <rect width="1400" height="840" fill="url(#sheet)"/>
+  <path d="M96 96 H1260 L1320 160 V748 H96 Z" fill="#ece7dd" stroke="#b2aba0" stroke-width="3"/>
+  <line x1="146" y1="186" x2="1260" y2="186" stroke="#9f9d98" stroke-width="2" opacity="0.5"/>
+  <line x1="146" y1="240" x2="1260" y2="240" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="294" x2="1260" y2="294" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="348" x2="1260" y2="348" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="402" x2="1260" y2="402" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="456" x2="1260" y2="456" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="510" x2="1260" y2="510" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="564" x2="1260" y2="564" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="618" x2="1260" y2="618" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <line x1="146" y1="672" x2="1260" y2="672" stroke="#a7a5a0" stroke-width="2" opacity="0.45"/>
+  <rect width="1400" height="840" filter="url(#grain)"/>
 </svg>
