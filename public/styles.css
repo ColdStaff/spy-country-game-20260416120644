@@ -289,25 +289,12 @@ select:focus {
   position: relative;
   color: var(--ink);
   border-color: #8f969c;
-  background:
-    url("assets/form-blank-crumpled.svg") center / cover no-repeat,
-    linear-gradient(180deg, #e9e2d6, #d8d1c4);
-  background-size: 100% 100%, 100% 100%;
-  background-repeat: no-repeat;
+  background: linear-gradient(180deg, #e6ddcd, #d8cebc);
   box-shadow: 0 14px 30px rgba(8, 10, 12, 0.34);
 }
 
 .paper-sheet::after {
-  content: "";
-  position: absolute;
-  right: 28px;
-  top: 10px;
-  width: 80px;
-  height: 26px;
-  background: rgba(167, 177, 189, 0.26);
-  border-radius: 2px;
-  transform: rotate(-8deg);
-  pointer-events: none;
+  display: none;
 }
 
 .paper-sheet h2 {
@@ -334,51 +321,26 @@ select:focus {
 }
 
 .paper-sheet .card-item {
-  position: relative;
-  border: 1px solid #b0a894;
-  border-radius: 7px;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(241, 238, 229, 0.96) 0,
-      rgba(241, 238, 229, 0.96) 34px,
-      rgba(163, 171, 181, 0.34) 34px,
-      rgba(163, 171, 181, 0.34) 36px
-    ),
-    linear-gradient(180deg, rgba(244, 240, 231, 0.97), rgba(231, 224, 212, 0.95));
+  border: 1px solid #b5ad9d;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(245, 240, 230, 0.98), rgba(232, 225, 211, 0.96));
   padding: 12px 14px 14px 20px;
-  box-shadow: 0 3px 9px rgba(31, 37, 46, 0.12);
-  overflow: hidden;
-}
-
-.paper-sheet .card-item::before {
-  content: "";
-  position: absolute;
-  left: 12px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: rgba(194, 129, 129, 0.45);
-}
-
-.paper-sheet .card-item > * {
-  position: relative;
-  z-index: 1;
+  box-shadow: 0 3px 9px rgba(31, 37, 46, 0.1);
 }
 
 .paper-sheet .card-options {
-  gap: 2px;
+  gap: 4px;
   margin-top: 8px;
 }
 
 .paper-sheet .card-option {
   border: 0;
-  border-bottom: 1px dashed rgba(115, 127, 143, 0.56);
-  border-radius: 0;
-  background: transparent;
+  border-bottom: 1px dashed rgba(120, 130, 142, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.24);
   color: #212c39;
   text-align: left;
-  padding: 7px 0;
+  padding: 8px 8px;
   cursor: pointer;
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
@@ -388,12 +350,12 @@ select:focus {
 
 .paper-sheet .card-option:hover {
   border-bottom-color: #6787ab;
-  background: rgba(226, 234, 244, 0.28);
+  background: rgba(226, 234, 244, 0.4);
 }
 
 .paper-sheet .card-option.voted {
   border-bottom-color: #4f77a1;
-  background: rgba(214, 226, 241, 0.34);
+  background: rgba(214, 226, 241, 0.5);
 }
 
 .option-check {
@@ -437,9 +399,9 @@ select:focus {
 
 .paper-sheet .card-lore {
   margin-top: 7px;
-  border: 1px dashed rgba(110, 120, 132, 0.7);
+  border: 1px dashed rgba(118, 126, 138, 0.65);
   border-radius: 7px;
-  background: rgba(225, 221, 212, 0.18);
+  background: rgba(231, 225, 214, 0.45);
 }
 
 .paper-sheet .card-lore summary {
@@ -505,6 +467,7 @@ select:focus {
   color: var(--ink);
   overflow: hidden;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .fold-body > * {
@@ -591,11 +554,11 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
-  padding: 46px 34px 26px;
+  padding: 44px 34px 26px;
 }
 
 .doc-report .fold-body {
-  min-height: 240px;
+  min-height: 270px;
   background:
     url("assets/doc-report-sheet.svg") center / 100% 100% no-repeat,
     linear-gradient(180deg, #ece9e3, #ded9cf);
@@ -603,11 +566,11 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
-  padding: 52px 40px 28px;
+  padding: 34px 28px 24px;
 }
 
 .doc-secret .fold-body {
-  min-height: 250px;
+  min-height: 280px;
   background:
     url("assets/doc-secret-file.svg") center / 100% 100% no-repeat,
     linear-gradient(180deg, #ece7ea, #dfd7df);
@@ -615,11 +578,11 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(10, 8, 12, 0.3);
-  padding: 46px 34px 28px;
+  padding: 34px 28px 28px;
 }
 
 .doc-form .fold-body {
-  min-height: 220px;
+  min-height: 250px;
   background:
     url("assets/doc-form-sheet.svg") center / 100% 100% no-repeat,
     linear-gradient(180deg, #ece9e3, #dfddd7);
@@ -627,11 +590,11 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
-  padding: 48px 34px 26px;
+  padding: 30px 26px 22px;
 }
 
 .doc-newspaper .fold-body {
-  min-height: 300px;
+  min-height: 340px;
   background:
     url("assets/doc-newspaper-cutout.svg") center / 100% 100% no-repeat,
     linear-gradient(180deg, #dfdfe2, #cdced1);
@@ -640,28 +603,28 @@ select:focus {
   border-color: transparent;
   box-shadow: 0 10px 24px rgba(8, 9, 11, 0.28);
   color: #1c1f24;
-  padding: 44px 34px 24px;
+  padding: 34px 26px 24px;
 }
 
 .doc-newspaper .news-feed {
-  column-count: 2;
-  column-gap: 14px;
+  column-count: 1;
+  column-gap: 0;
   display: block;
-  max-height: 320px;
+  max-height: 380px;
   overflow: auto;
 }
 
 .doc-newspaper .news-item {
   break-inside: avoid;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   border: 0;
   border-left: 0;
   border-bottom: 1px dashed rgba(94, 98, 104, 0.84);
   background: transparent;
   color: #1e2025;
   border-radius: 0;
-  padding: 2px 0 6px;
-  font-size: 0.88rem;
+  padding: 3px 0 7px;
+  font-size: 0.92rem;
 }
 
 .doc-newspaper .news-item.bad,
@@ -682,7 +645,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(12, 10, 8, 0.28);
-  padding: 42px 34px 24px;
+  padding: 30px 24px 22px;
 }
 
 .doc-journal .fold-body {
@@ -916,10 +879,6 @@ select:focus {
 
   .paper-sheet .card-item {
     padding: 10px 10px 12px 16px;
-  }
-
-  .paper-sheet .card-item::before {
-    left: 9px;
   }
 }
 

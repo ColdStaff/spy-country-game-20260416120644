@@ -1,35 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
   <defs>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfd1bb"/><stop offset="1" stop-color="#c8b796"/></linearGradient>
-    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="25"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer></filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#deceb7"/>
+      <stop offset="1" stop-color="#c7b693"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.86" numOctaves="2" seed="27"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.07"/></feComponentTransfer>
+    </filter>
   </defs>
 
-  <rect width="1400" height="840" fill="url(#card)"/>
-  <rect x="110" y="96" width="1180" height="648" rx="16" fill="#ddceb5" stroke="#a58f6f" stroke-width="4"/>
-  <rect x="110" y="96" width="92" height="648" fill="#b69c77" opacity="0.42"/>
-
-  <g stroke="#9e8562" stroke-width="2" opacity="0.42">
-    <line x1="236" y1="180" x2="1244" y2="180"/>
-    <line x1="236" y1="236" x2="1244" y2="236"/>
-    <line x1="236" y1="292" x2="1244" y2="292"/>
-    <line x1="236" y1="348" x2="1244" y2="348"/>
-    <line x1="236" y1="404" x2="1244" y2="404"/>
-    <line x1="236" y1="460" x2="1244" y2="460"/>
-    <line x1="236" y1="516" x2="1244" y2="516"/>
-    <line x1="236" y1="572" x2="1244" y2="572"/>
-    <line x1="236" y1="628" x2="1244" y2="628"/>
-  </g>
-
-  <g fill="#8f7a5c" opacity="0.36">
-    <rect x="148" y="168" width="22" height="22" rx="4"/>
-    <rect x="148" y="224" width="22" height="22" rx="4"/>
-    <rect x="148" y="280" width="22" height="22" rx="4"/>
-    <rect x="148" y="336" width="22" height="22" rx="4"/>
-    <rect x="148" y="392" width="22" height="22" rx="4"/>
-    <rect x="148" y="448" width="22" height="22" rx="4"/>
-    <rect x="148" y="504" width="22" height="22" rx="4"/>
-    <rect x="148" y="560" width="22" height="22" rx="4"/>
-    <rect x="148" y="616" width="22" height="22" rx="4"/>
+  <rect width="1400" height="840" fill="url(#bg)"/>
+  <g stroke="#9d8661" stroke-width="2" opacity="0.28">
+    <line x1="92" y1="166" x2="1308" y2="166"/>
+    <line x1="92" y1="214" x2="1308" y2="214"/>
+    <line x1="92" y1="262" x2="1308" y2="262"/>
+    <line x1="92" y1="310" x2="1308" y2="310"/>
+    <line x1="92" y1="358" x2="1308" y2="358"/>
+    <line x1="92" y1="406" x2="1308" y2="406"/>
+    <line x1="92" y1="454" x2="1308" y2="454"/>
+    <line x1="92" y1="502" x2="1308" y2="502"/>
+    <line x1="92" y1="550" x2="1308" y2="550"/>
+    <line x1="92" y1="598" x2="1308" y2="598"/>
+    <line x1="92" y1="646" x2="1308" y2="646"/>
+    <line x1="92" y1="694" x2="1308" y2="694"/>
   </g>
 
   <rect width="1400" height="840" filter="url(#grain)"/>
