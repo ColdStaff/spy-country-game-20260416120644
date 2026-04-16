@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0d5c1"/>
+      <stop offset="1" stop-color="#c8b89d"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.88" numOctaves="2" seed="33"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.1"/></feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect x="130" y="120" width="1140" height="600" rx="18" fill="url(#card)" stroke="#a58f6d" stroke-width="4"/>
+  <rect x="130" y="120" width="84" height="600" fill="#b49a75" opacity="0.48"/>
+
+  <g stroke="#a08662" stroke-width="2" opacity="0.42">
+    <line x1="250" y1="210" x2="1210" y2="210"/>
+    <line x1="250" y1="268" x2="1210" y2="268"/>
+    <line x1="250" y1="326" x2="1210" y2="326"/>
+    <line x1="250" y1="384" x2="1210" y2="384"/>
+    <line x1="250" y1="442" x2="1210" y2="442"/>
+    <line x1="250" y1="500" x2="1210" y2="500"/>
+    <line x1="250" y1="558" x2="1210" y2="558"/>
+  </g>
+
+  <g fill="#8d795a" opacity="0.35">
+    <rect x="168" y="178" width="20" height="20" rx="3"/>
+    <rect x="168" y="236" width="20" height="20" rx="3"/>
+    <rect x="168" y="294" width="20" height="20" rx="3"/>
+    <rect x="168" y="352" width="20" height="20" rx="3"/>
+    <rect x="168" y="410" width="20" height="20" rx="3"/>
+    <rect x="168" y="468" width="20" height="20" rx="3"/>
+    <rect x="168" y="526" width="20" height="20" rx="3"/>
+  </g>
+
+  <rect x="130" y="120" width="1140" height="600" filter="url(#grain)"/>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#edf1f4"/>
+      <stop offset="1" stop-color="#d8e0e8"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="1.0" numOctaves="3" seed="21"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect x="130" y="110" width="1140" height="620" rx="14" fill="url(#paper)" stroke="#a4b2c1" stroke-width="3"/>
+  <line x1="230" y1="110" x2="230" y2="730" stroke="#c78585" stroke-width="3" opacity="0.55"/>
+
+  <g stroke="#89a9c9" stroke-width="2" opacity="0.36">
+    <line x1="250" y1="190" x2="1230" y2="190"/>
+    <line x1="250" y1="236" x2="1230" y2="236"/>
+    <line x1="250" y1="282" x2="1230" y2="282"/>
+    <line x1="250" y1="328" x2="1230" y2="328"/>
+    <line x1="250" y1="374" x2="1230" y2="374"/>
+    <line x1="250" y1="420" x2="1230" y2="420"/>
+    <line x1="250" y1="466" x2="1230" y2="466"/>
+    <line x1="250" y1="512" x2="1230" y2="512"/>
+    <line x1="250" y1="558" x2="1230" y2="558"/>
+    <line x1="250" y1="604" x2="1230" y2="604"/>
+  </g>
+
+  <rect x="130" y="110" width="1140" height="620" filter="url(#grain)"/>
+</svg>

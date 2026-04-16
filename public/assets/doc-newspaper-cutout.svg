@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 840">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dbdcde"/>
+      <stop offset="1" stop-color="#c6c7ca"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" seed="12"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.1"/></feComponentTransfer>
+    </filter>
+    <clipPath id="clip">
+      <path d="M165 142 L1210 116 L1264 220 L1242 708 L190 730 L134 644 L146 238 Z"/>
+    </clipPath>
+  </defs>
+
+  <path d="M165 142 L1210 116 L1264 220 L1242 708 L190 730 L134 644 L146 238 Z" fill="url(#paper)" stroke="#8d9094" stroke-width="4"/>
+
+  <g clip-path="url(#clip)">
+    <rect x="186" y="182" width="1010" height="18" fill="#8d9094" opacity="0.7"/>
+    <rect x="186" y="214" width="1010" height="10" fill="#989b9f" opacity="0.6"/>
+
+    <g fill="#72757a" opacity="0.52">
+      <rect x="190" y="260" width="302" height="10"/>
+      <rect x="190" y="282" width="294" height="10"/>
+      <rect x="190" y="304" width="286" height="10"/>
+      <rect x="190" y="326" width="308" height="10"/>
+      <rect x="190" y="348" width="278" height="10"/>
+      <rect x="190" y="370" width="300" height="10"/>
+
+      <rect x="540" y="260" width="302" height="10"/>
+      <rect x="540" y="282" width="294" height="10"/>
+      <rect x="540" y="304" width="286" height="10"/>
+      <rect x="540" y="326" width="308" height="10"/>
+      <rect x="540" y="348" width="278" height="10"/>
+      <rect x="540" y="370" width="300" height="10"/>
+
+      <rect x="890" y="260" width="282" height="10"/>
+      <rect x="890" y="282" width="274" height="10"/>
+      <rect x="890" y="304" width="266" height="10"/>
+      <rect x="890" y="326" width="288" height="10"/>
+      <rect x="890" y="348" width="258" height="10"/>
+      <rect x="890" y="370" width="280" height="10"/>
+    </g>
+
+    <g fill="#72757a" opacity="0.42">
+      <rect x="190" y="438" width="980" height="8"/>
+      <rect x="190" y="458" width="960" height="8"/>
+      <rect x="190" y="478" width="970" height="8"/>
+      <rect x="190" y="498" width="940" height="8"/>
+      <rect x="190" y="518" width="980" height="8"/>
+      <rect x="190" y="538" width="952" height="8"/>
+      <rect x="190" y="558" width="968" height="8"/>
+      <rect x="190" y="578" width="946" height="8"/>
+      <rect x="190" y="598" width="980" height="8"/>
+    </g>
+  </g>
+
+  <path d="M165 142 L1210 116 L1264 220 L1242 708 L190 730 L134 644 L146 238 Z" fill="none" filter="url(#grain)"/>
+</svg>
