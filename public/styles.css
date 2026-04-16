@@ -290,8 +290,10 @@ select:focus {
   color: var(--ink);
   border-color: #9ea5ac;
   background:
-    linear-gradient(rgba(18, 22, 28, 0.36), rgba(18, 22, 28, 0.36)),
+    linear-gradient(rgba(18, 22, 28, 0.16), rgba(18, 22, 28, 0.16)),
     url("assets/form-blank-crumpled.svg") center / cover no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  background-repeat: no-repeat;
   box-shadow: 0 12px 28px rgba(8, 10, 12, 0.34);
 }
 
@@ -332,11 +334,12 @@ select:focus {
 }
 
 .paper-sheet .card-item {
-  border: 1px solid rgba(117, 128, 142, 0.55);
-  border-radius: 10px;
-  background: rgba(246, 244, 238, 0.38);
-  padding: 9px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  border: 0;
+  border-bottom: 1px solid rgba(113, 123, 137, 0.52);
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 4px 10px;
+  box-shadow: none;
 }
 
 .paper-sheet .card-options {
@@ -344,12 +347,13 @@ select:focus {
 }
 
 .paper-sheet .card-option {
-  border: 1px solid rgba(122, 135, 151, 0.72);
-  border-radius: 8px;
-  background: rgba(249, 248, 244, 0.58);
+  border: 0;
+  border-bottom: 1px dashed rgba(122, 135, 151, 0.62);
+  border-radius: 0;
+  background: transparent;
   color: #212c39;
   text-align: left;
-  padding: 8px;
+  padding: 6px 2px;
   cursor: pointer;
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
@@ -358,13 +362,13 @@ select:focus {
 }
 
 .paper-sheet .card-option:hover {
-  border-color: #7894b5;
-  background: rgba(244, 247, 251, 0.66);
+  border-bottom-color: #6787ab;
+  background: rgba(231, 239, 248, 0.32);
 }
 
 .paper-sheet .card-option.voted {
-  border-color: #5f82a9;
-  background: rgba(220, 233, 248, 0.72);
+  border-bottom-color: #4f77a1;
+  background: rgba(220, 233, 248, 0.44);
 }
 
 .option-check {
@@ -409,7 +413,7 @@ select:focus {
   margin-top: 6px;
   border: 1px dashed rgba(110, 120, 132, 0.7);
   border-radius: 8px;
-  background: rgba(225, 221, 212, 0.48);
+  background: rgba(225, 221, 212, 0.24);
 }
 
 .paper-sheet .card-lore summary {
@@ -507,10 +511,13 @@ select:focus {
 #screen-game .fold-body .problem-target,
 #screen-game .fold-body .history-item,
 #screen-game .fold-body .spy-order {
-  border: 1px solid rgba(122, 132, 143, 0.7);
-  border-radius: 8px;
-  background: rgba(246, 246, 243, 0.34);
+  border: 0;
+  border-bottom: 1px solid rgba(120, 130, 142, 0.58);
+  border-radius: 0;
+  background: transparent;
   color: #1f2a37;
+  box-shadow: none;
+  padding: 6px 4px;
 }
 
 #screen-game .fold-body .card-note {
@@ -540,7 +547,7 @@ select:focus {
   min-height: 280px;
   background-color: #e3ddd0;
   background:
-    linear-gradient(rgba(21, 24, 30, 0.24), rgba(21, 24, 30, 0.24)),
+    linear-gradient(rgba(21, 24, 30, 0.1), rgba(21, 24, 30, 0.1)),
     url("assets/doc-open-book.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -552,7 +559,7 @@ select:focus {
   min-height: 240px;
   background-color: #e2ddd3;
   background:
-    linear-gradient(rgba(21, 24, 30, 0.22), rgba(21, 24, 30, 0.22)),
+    linear-gradient(rgba(21, 24, 30, 0.11), rgba(21, 24, 30, 0.11)),
     url("assets/doc-report-sheet.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -564,7 +571,7 @@ select:focus {
   min-height: 250px;
   background-color: #e1dbe1;
   background:
-    linear-gradient(rgba(25, 20, 24, 0.26), rgba(25, 20, 24, 0.26)),
+    linear-gradient(rgba(25, 20, 24, 0.15), rgba(25, 20, 24, 0.15)),
     url("assets/doc-secret-file.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -576,7 +583,7 @@ select:focus {
   min-height: 220px;
   background-color: #dfddd7;
   background:
-    linear-gradient(rgba(20, 24, 29, 0.24), rgba(20, 24, 29, 0.24)),
+    linear-gradient(rgba(20, 24, 29, 0.11), rgba(20, 24, 29, 0.11)),
     url("assets/doc-form-sheet.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -589,7 +596,7 @@ select:focus {
   min-height: 300px;
   background-color: #d1d2d4;
   background:
-    linear-gradient(rgba(17, 18, 20, 0.26), rgba(17, 18, 20, 0.26)),
+    linear-gradient(rgba(17, 18, 20, 0.08), rgba(17, 18, 20, 0.08)),
     url("assets/doc-newspaper-cutout.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -610,18 +617,19 @@ select:focus {
 .doc-newspaper .news-item {
   break-inside: avoid;
   margin: 0 0 8px;
-  border: 1px solid rgba(111, 114, 120, 0.9);
-  border-left: 4px double rgba(82, 86, 92, 0.95);
-  background: rgba(240, 240, 239, 0.86);
+  border: 0;
+  border-left: 0;
+  border-bottom: 1px dashed rgba(94, 98, 104, 0.84);
+  background: transparent;
   color: #1e2025;
-  border-radius: 4px;
-  padding: 6px;
+  border-radius: 0;
+  padding: 2px 0 6px;
   font-size: 0.88rem;
 }
 
 .doc-newspaper .news-item.bad,
 .doc-newspaper .news-item.good {
-  border-left-color: rgba(82, 86, 92, 0.95);
+  border-left-color: transparent;
 }
 
 .doc-newspaper .news-item small {
@@ -632,7 +640,7 @@ select:focus {
   min-height: 230px;
   background-color: #cbbca4;
   background:
-    linear-gradient(rgba(28, 23, 17, 0.24), rgba(28, 23, 17, 0.24)),
+    linear-gradient(rgba(28, 23, 17, 0.12), rgba(28, 23, 17, 0.12)),
     url("assets/doc-archive-card.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -644,7 +652,7 @@ select:focus {
   min-height: 260px;
   background-color: #d8e0e8;
   background:
-    linear-gradient(rgba(20, 24, 29, 0.2), rgba(20, 24, 29, 0.2)),
+    linear-gradient(rgba(20, 24, 29, 0.1), rgba(20, 24, 29, 0.1)),
     url("assets/doc-journal-page.svg") center / cover no-repeat;
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
@@ -695,6 +703,15 @@ select:focus {
 .spy-order,
 .problem-target {
   padding: 9px;
+}
+
+.doc-book .problem-target,
+.doc-book .stat-item,
+.doc-report .card-note,
+.doc-archive .history-item,
+.doc-secret .spy-order,
+.doc-journal .chat-messages {
+  background: transparent !important;
 }
 
 .news-feed {
