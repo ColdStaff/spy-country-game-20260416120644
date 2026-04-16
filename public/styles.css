@@ -1,14 +1,15 @@
-﻿:root {
-  --bg: #0b0d12;
-  --panel: #141821;
-  --panel-soft: #1a202b;
-  --line: #2a3343;
-  --text: #eef2f8;
-  --muted: #98a3b7;
-  --accent: #40bfa8;
-  --accent-2: #2f8f7f;
-  --danger: #df5268;
-  --good: #43b581;
+:root {
+  --bg: #121821;
+  --bg-soft: #171f2a;
+  --panel: #1d2734;
+  --panel-soft: #233041;
+  --line: #3a4a5f;
+  --text: #edf2f7;
+  --muted: #a9b5c4;
+  --accent: #86adc7;
+  --accent-strong: #547793;
+  --danger: #bf6666;
+  --good: #6fb086;
 }
 
 * {
@@ -17,28 +18,53 @@
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 12% 8%, #1a2435 0, #0b0d12 42%);
   color: var(--text);
-  font-family: "Manrope", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
+  background:
+    linear-gradient(rgba(10, 14, 20, 0.96), rgba(10, 14, 20, 0.96)),
+    radial-gradient(circle at 15% 12%, #203249 0, #121821 42%);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.22;
+}
+
+body.in-game {
+  background:
+    linear-gradient(rgba(8, 12, 18, 0.92), rgba(8, 12, 18, 0.78)),
+    url("assets/senate.svg") center bottom / min(1280px, 95vw) no-repeat,
+    radial-gradient(circle at 50% 5%, #30445e 0, #121821 48%);
 }
 
 .app {
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   margin-bottom: 12px;
 }
 
 .topbar h1 {
   margin: 0;
-  font-family: "Russo One", sans-serif;
-  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  font-family: "Merriweather", serif;
+  font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  letter-spacing: 0.02em;
 }
 
 .screen {
@@ -50,15 +76,18 @@ body {
 }
 
 .panel {
-  background: var(--panel);
+  background: rgba(29, 39, 52, 0.9);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 12px;
+  box-shadow: 0 8px 20px rgba(4, 6, 9, 0.2);
 }
 
 .panel h2,
 .panel h3 {
   margin: 0 0 8px;
+  font-family: "Merriweather", serif;
+  font-weight: 700;
 }
 
 .split {
@@ -76,6 +105,10 @@ body {
   font-size: 0.92rem;
 }
 
+.small-field {
+  margin-bottom: 4px;
+}
+
 input,
 select {
   width: 100%;
@@ -89,7 +122,7 @@ select {
 
 input:focus,
 select:focus {
-  outline: 2px solid rgba(64, 191, 168, 0.45);
+  outline: 2px solid rgba(134, 173, 199, 0.45);
   outline-offset: 1px;
 }
 
@@ -100,18 +133,28 @@ select:focus {
   border-radius: 8px;
   padding: 9px 12px;
   cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:hover {
+  background: #2c3c50;
+  border-color: #4e647f;
 }
 
 .btn.primary {
-  background: linear-gradient(120deg, var(--accent-2), var(--accent));
-  color: #07130f;
-  border-color: transparent;
-  font-weight: 800;
+  background: #6f95b1;
+  color: #10161e;
+  border-color: #85abc5;
+  font-weight: 700;
+}
+
+.btn.primary:hover {
+  background: #86adc7;
 }
 
 .btn.danger {
-  background: linear-gradient(120deg, #813146, var(--danger));
-  border-color: transparent;
+  background: #8f4d4d;
+  border-color: #b46a6a;
   color: #fff;
 }
 
@@ -129,13 +172,13 @@ select:focus {
 }
 
 .pill.good {
-  border-color: rgba(67, 181, 129, 0.65);
-  color: #8ee1b9;
+  border-color: rgba(111, 176, 134, 0.75);
+  color: #9edab0;
 }
 
 .pill.bad {
-  border-color: rgba(223, 82, 104, 0.65);
-  color: #f39baa;
+  border-color: rgba(191, 102, 102, 0.75);
+  color: #efb2b2;
 }
 
 .inline-row {
@@ -147,6 +190,10 @@ select:focus {
 
 .inline-row.between {
   justify-content: space-between;
+}
+
+.wrap-gap {
+  gap: 10px;
 }
 
 .grid-2 {
@@ -175,6 +222,7 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--panel-soft);
@@ -196,45 +244,111 @@ select:focus {
   padding: 8px;
 }
 
-.game-layout {
+.game-shell {
   display: grid;
-  grid-template-columns: 1fr;
   gap: 10px;
 }
 
+.game-status {
+  backdrop-filter: blur(3px);
+}
+
+.game-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.decisions-panel {
+  min-height: 420px;
+}
+
+.side-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.fold {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(22, 30, 41, 0.82);
+  overflow: hidden;
+}
+
+.fold summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  font-weight: 700;
+  color: #dfe8f1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.fold summary::-webkit-details-marker {
+  display: none;
+}
+
+.fold summary::after {
+  content: "+";
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.fold[open] summary::after {
+  content: "-";
+}
+
+.fold-body {
+  padding: 10px;
+  display: grid;
+  gap: 9px;
+}
+
+#globalProblem,
 #statsGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .stat-item {
   border: 1px solid var(--line);
-  background: var(--panel-soft);
+  background: rgba(35, 48, 65, 0.8);
   border-radius: 8px;
   padding: 8px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
 }
 
 .bar {
   margin-top: 6px;
   height: 7px;
   border-radius: 999px;
-  background: #0f131b;
+  background: #131a23;
   overflow: hidden;
 }
 
 .bar > span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #2f9e87, #72e7c2);
+  background: linear-gradient(90deg, var(--accent-strong), var(--accent));
 }
 
 .card-note {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--panel-soft);
+  background: rgba(35, 48, 65, 0.8);
   padding: 8px;
-  margin-bottom: 8px;
+  min-height: 48px;
 }
 
 .cards-board,
@@ -249,8 +363,31 @@ select:focus {
 .problem-target {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--panel-soft);
+  background: rgba(35, 48, 65, 0.88);
   padding: 9px;
+}
+
+.card-meta {
+  margin-top: 4px;
+}
+
+.card-lore {
+  margin-top: 6px;
+  border: 1px dashed rgba(174, 191, 210, 0.3);
+  border-radius: 8px;
+  background: rgba(13, 18, 25, 0.35);
+}
+
+.card-lore summary {
+  padding: 7px 8px;
+  font-size: 0.88rem;
+  color: #c6d1de;
+}
+
+.card-lore .lore-text {
+  padding: 0 8px 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .card-options {
@@ -262,28 +399,33 @@ select:focus {
 .card-option {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #111722;
+  background: #1a2432;
   color: var(--text);
   text-align: left;
   padding: 8px;
   cursor: pointer;
 }
 
+.card-option:hover {
+  border-color: #5c7897;
+  background: #253347;
+}
+
 .card-option.voted {
-  border-color: #3ca892;
-  background: rgba(64, 191, 168, 0.16);
+  border-color: #8cb6d3;
+  background: rgba(140, 182, 211, 0.15);
 }
 
 .news-feed {
-  max-height: 260px;
+  max-height: 250px;
   overflow: auto;
   display: grid;
   gap: 6px;
 }
 
 .news-item {
-  border-left: 3px solid #4ab59f;
-  background: var(--panel-soft);
+  border-left: 3px solid #6f95b1;
+  background: rgba(35, 48, 65, 0.8);
   border-radius: 8px;
   padding: 7px;
   font-size: 0.92rem;
@@ -298,11 +440,10 @@ select:focus {
 }
 
 .chat-messages {
-  margin: 8px 0;
   border: 1px solid var(--line);
-  background: var(--panel-soft);
+  background: rgba(17, 24, 33, 0.75);
   border-radius: 8px;
-  min-height: 130px;
+  min-height: 120px;
   max-height: 220px;
   overflow: auto;
   padding: 8px;
@@ -324,9 +465,10 @@ select:focus {
   bottom: 16px;
   transform: translateX(-50%);
   border: 1px solid var(--line);
-  background: #0f141d;
+  background: #141d28;
   border-radius: 8px;
   padding: 9px 12px;
+  z-index: 15;
 }
 
 .avatar {
@@ -386,13 +528,15 @@ select:focus {
   bottom: 10%;
 }
 
+@media (max-width: 1040px) {
+  .game-main {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .split {
     grid-template-columns: 1fr;
-  }
-
-  #statsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -401,11 +545,12 @@ select:focus {
     padding: 10px;
   }
 
-  #statsGrid {
-    grid-template-columns: 1fr;
-  }
-
   .grid-2 {
     grid-template-columns: 1fr;
   }
+
+  .topbar h1 {
+    font-size: 1.25rem;
+  }
 }
+

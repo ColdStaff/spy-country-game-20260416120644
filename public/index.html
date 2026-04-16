@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
   <title>Теневая Республика</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Russo+One&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -20,7 +20,7 @@
       <div class="panel split">
         <div>
           <h2>Создай политика</h2>
-          <p class="muted">Введи ник и внешний вид, чтобы войти в игру.</p>
+          <p class="muted">Введи ник и выбери внешний вид, чтобы войти в игру.</p>
           <label class="field">
             <span>Никнейм</span>
             <input id="nicknameInput" type="text" maxlength="24" placeholder="Например, МинистрСевера" />
@@ -93,67 +93,94 @@
     </section>
 
     <section id="screen-game" class="screen">
-      <div class="game-layout">
-        <div class="panel">
-          <div class="inline-row">
+      <div class="game-shell">
+        <section class="panel game-status">
+          <div class="inline-row wrap-gap">
             <span id="dayBadge" class="pill"></span>
             <span id="phaseBadge" class="pill"></span>
             <span id="roleBadge" class="pill"></span>
           </div>
           <div id="phaseHint" class="muted"></div>
-        </div>
+        </section>
 
-        <div class="panel" id="globalProblem"></div>
+        <div class="game-main">
+          <section class="panel decisions-panel">
+            <div class="inline-row between">
+              <h2>Решения дня</h2>
+              <div id="phaseActions" class="inline-row"></div>
+            </div>
+            <div id="cardsBoard" class="cards-board"></div>
+          </section>
 
-        <div class="panel" id="statsGrid"></div>
+          <aside class="side-stack">
+            <details class="fold" open>
+              <summary>Состояние страны</summary>
+              <div class="fold-body">
+                <div id="globalProblem"></div>
+                <div id="statsGrid"></div>
+              </div>
+            </details>
 
-        <div class="panel hidden" id="spyTeam"></div>
-        <div class="panel hidden" id="spyOrders"></div>
+            <details class="fold">
+              <summary>Сюжет дня</summary>
+              <div class="fold-body">
+                <div id="eventCard" class="card-note"></div>
+                <div id="storyCard" class="card-note"></div>
+              </div>
+            </details>
 
-        <div class="panel">
-          <div id="eventCard" class="card-note"></div>
-          <div id="storyCard" class="card-note"></div>
-        </div>
+            <details id="spyPanel" class="fold hidden">
+              <summary>Шпионский блок</summary>
+              <div class="fold-body">
+                <div id="spyTeam"></div>
+                <div id="spyOrders"></div>
+              </div>
+            </details>
 
-        <div class="panel">
-          <div class="inline-row between">
-            <h3>Карточки решений</h3>
-            <button id="historyToggleBtn" class="btn tiny">История прошлых раундов</button>
-          </div>
-          <div id="cardsBoard" class="cards-board"></div>
-          <div id="phaseActions" class="inline-row"></div>
-        </div>
+            <details class="fold">
+              <summary>Арест</summary>
+              <div class="fold-body">
+                <div class="inline-row wrap-gap">
+                  <select id="arrestSelect"></select>
+                  <button id="arrestVoteBtn" class="btn tiny">Голосовать</button>
+                  <button id="arrestSkipBtn" class="btn tiny">Пропуск</button>
+                </div>
+                <div id="arrestStatus" class="muted"></div>
+              </div>
+            </details>
 
-        <div id="historyPanel" class="panel hidden">
-          <h3>История решений</h3>
-          <div id="historyList" class="history-list"></div>
-        </div>
+            <details class="fold">
+              <summary>Новости</summary>
+              <div class="fold-body">
+                <div id="newsFeed" class="news-feed"></div>
+              </div>
+            </details>
 
-        <div class="panel">
-          <h3>Арест</h3>
-          <div class="inline-row">
-            <select id="arrestSelect"></select>
-            <button id="arrestVoteBtn" class="btn tiny">Голосовать</button>
-            <button id="arrestSkipBtn" class="btn tiny">Пропустить</button>
-          </div>
-          <div id="arrestStatus" class="muted"></div>
-        </div>
+            <details class="fold">
+              <summary>История раундов</summary>
+              <div class="fold-body">
+                <div id="historyList" class="history-list"></div>
+              </div>
+            </details>
 
-        <div class="panel">
-          <h3>Новости</h3>
-          <div id="newsFeed" class="news-feed"></div>
-        </div>
-
-        <div class="panel">
-          <div class="inline-row">
-            <button id="chatPublicTab" class="btn tiny primary">Общий чат</button>
-            <button id="chatSpyTab" class="btn tiny">Шпионский чат</button>
-          </div>
-          <div id="chatMessages" class="chat-messages"></div>
-          <div class="inline-row">
-            <input id="chatInput" type="text" maxlength="300" placeholder="Сообщение..." />
-            <button id="sendChatBtn" class="btn tiny">Отправить</button>
-          </div>
+            <details class="fold" open>
+              <summary>Чат</summary>
+              <div class="fold-body">
+                <label class="field small-field">
+                  <span>Канал</span>
+                  <select id="chatScopeSelect">
+                    <option value="public">Общий чат</option>
+                    <option value="spy">Шпионский чат</option>
+                  </select>
+                </label>
+                <div id="chatMessages" class="chat-messages"></div>
+                <div class="inline-row wrap-gap">
+                  <input id="chatInput" type="text" maxlength="300" placeholder="Сообщение..." />
+                  <button id="sendChatBtn" class="btn tiny">Отправить</button>
+                </div>
+              </div>
+            </details>
+          </aside>
         </div>
       </div>
     </section>
@@ -165,3 +192,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+

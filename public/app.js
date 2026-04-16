@@ -1,4 +1,3 @@
-﻿
 const socket = io();
 
 const palettes = {
@@ -35,7 +34,7 @@ const palettes = {
     { label: "Глубокая бирюза", value: "#2C666E" },
     { label: "Графит", value: "#594545" },
     { label: "Зеленый мрак", value: "#285943" },
-    { label: "Неон-дым", value: "#5C3C92" }
+    { label: "Туман", value: "#5A6878" }
   ]
 };
 
@@ -55,7 +54,6 @@ const state = {
   rooms: [],
   chatScope: "public",
   messages: { public: [], spy: [] },
-  historyOpen: false,
   toastTimer: null
 };
 
@@ -104,6 +102,7 @@ const el = {
   phaseHint: document.getElementById("phaseHint"),
   globalProblem: document.getElementById("globalProblem"),
   statsGrid: document.getElementById("statsGrid"),
+  spyPanel: document.getElementById("spyPanel"),
   spyTeam: document.getElementById("spyTeam"),
   spyOrders: document.getElementById("spyOrders"),
   eventCard: document.getElementById("eventCard"),
@@ -111,8 +110,6 @@ const el = {
   cardsBoard: document.getElementById("cardsBoard"),
   phaseActions: document.getElementById("phaseActions"),
 
-  historyToggleBtn: document.getElementById("historyToggleBtn"),
-  historyPanel: document.getElementById("historyPanel"),
   historyList: document.getElementById("historyList"),
 
   arrestSelect: document.getElementById("arrestSelect"),
@@ -121,8 +118,7 @@ const el = {
   arrestStatus: document.getElementById("arrestStatus"),
 
   newsFeed: document.getElementById("newsFeed"),
-  chatPublicTab: document.getElementById("chatPublicTab"),
-  chatSpyTab: document.getElementById("chatSpyTab"),
+  chatScopeSelect: document.getElementById("chatScopeSelect"),
   chatMessages: document.getElementById("chatMessages"),
   chatInput: document.getElementById("chatInput"),
   sendChatBtn: document.getElementById("sendChatBtn"),
@@ -174,6 +170,8 @@ function setScreen(name) {
   Object.entries(el.screens).forEach(([id, node]) => {
     node.classList.toggle("visible", id === name);
   });
+
+  document.body.classList.toggle("in-game", name === "game");
 }
 
 function renderAvatarPreview() {
@@ -183,8 +181,8 @@ function renderAvatarPreview() {
 function phaseLabel(phase) {
   const map = {
     day: "День: голосование",
-    night: "Ночь: шпионский шепот",
-    arrest: "Арест: общее решение",
+    night: "Ночь: обсуждение",
+    arrest: "Арест",
     ended: "Матч завершен"
   };
   return map[phase] || "Ожидание";
@@ -192,8 +190,8 @@ function phaseLabel(phase) {
 
 function phaseHint(phase) {
   if (phase === "day") return "Выберите по одной опции в каждой карточке.";
-  if (phase === "night") return "Шпионы обсуждают план в приватном чате. Хост переводит фазу дальше.";
-  if (phase === "arrest") return "Проголосуйте за арест или пропустите.";
+  if (phase === "night") return "Ночная фаза: шпионы согласовывают линию поведения.";
+  if (phase === "arrest") return "Голосование за задержание подозреваемого.";
   return "";
 }
 
@@ -248,10 +246,11 @@ function renderRoom() {
 function renderStats(stats) {
   el.statsGrid.innerHTML = Object.entries(stats)
     .map(
-      ([key, value]) => `<div class="stat-item"><div>${statLabels[key] || key}</div><b>${value}</b><div class="bar"><span style="width:${value}%"></span></div></div>`
+      ([key, value]) => `<div class="stat-item"><div class="stat-row"><span>${statLabels[key] || key}</span><b>${value}</b></div><div class="bar"><span style="width:${value}%"></span></div></div>`
     )
     .join("");
 }
+
 function renderGlobalProblem(problem) {
   if (!problem) {
     el.globalProblem.innerHTML = "";
@@ -262,19 +261,23 @@ function renderGlobalProblem(problem) {
   const statusTone = problem.resolved ? "good" : problem.failed ? "bad" : "";
 
   el.globalProblem.innerHTML = `
-    <h3>Глобальная проблема: ${escapeHtml(problem.title)}</h3>
-    <div class="muted">${escapeHtml(problem.description)}</div>
-    <div class="inline-row" style="margin-top:8px;">
-      <span class="pill ${statusTone}">Статус: ${statusText}</span>
-      <span class="pill">Дедлайн: день ${problem.deadlineDay}</span>
-      <span class="pill">Прогресс: ${problem.progress}%</span>
-    </div>
-    <div class="cards-board" style="margin-top:8px;">
-      ${problem.targets
-        .map(
-          (t) => `<div class="problem-target"><b>${escapeHtml(t.label)}</b>: ${t.current}/${t.target} ${t.reached ? "✅" : ""}</div>`
-        )
-        .join("")}
+    <div class="problem-target">
+      <div class="inline-row between">
+        <b>Глобальная проблема: ${escapeHtml(problem.title)}</b>
+        <span class="pill ${statusTone}">${statusText}</span>
+      </div>
+      <div class="muted">${escapeHtml(problem.description)}</div>
+      <div class="inline-row" style="margin-top:8px;">
+        <span class="pill">Дедлайн: день ${problem.deadlineDay}</span>
+        <span class="pill">Прогресс: ${problem.progress}%</span>
+      </div>
+      <div class="cards-board" style="margin-top:8px;">
+        ${problem.targets
+          .map(
+            (t) => `<div class="problem-target"><b>${escapeHtml(t.label)}</b>: ${t.current}/${t.target} ${t.reached ? "<span class='pill good'>выполнено</span>" : ""}</div>`
+          )
+          .join("")}
+      </div>
     </div>
   `;
 }
@@ -282,8 +285,7 @@ function renderGlobalProblem(problem) {
 function renderSpyInfo(game) {
   const isSpy = game.myRole === "spy";
 
-  el.spyTeam.classList.toggle("hidden", !isSpy);
-  el.spyOrders.classList.toggle("hidden", !isSpy);
+  el.spyPanel.classList.toggle("hidden", !isSpy);
 
   if (!isSpy) {
     el.spyTeam.innerHTML = "";
@@ -291,10 +293,10 @@ function renderSpyInfo(game) {
     return;
   }
 
-  el.spyTeam.innerHTML = `<h3>Команда шпионов</h3><div>${game.spyTeam.map((x) => escapeHtml(x.nickname)).join(", ") || "Ты один"}</div>`;
+  const teamNames = game.spyTeam.map((x) => escapeHtml(x.nickname)).join(", ") || "Ты один";
+  el.spyTeam.innerHTML = `<div class="spy-order"><b>Команда шпионов</b><div>${teamNames}</div></div>`;
 
   el.spyOrders.innerHTML = `
-    <h3>Директивы внешних агентов на день</h3>
     <div class="cards-board">
       ${(game.spyOrders || [])
         .map(
@@ -311,12 +313,8 @@ function renderSpyInfo(game) {
 }
 
 function renderHistory(game) {
-  el.historyPanel.classList.toggle("hidden", !state.historyOpen);
-  el.historyToggleBtn.textContent = state.historyOpen ? "Скрыть историю" : "История прошлых раундов";
-
-  if (!state.historyOpen) return;
-
   const list = game.history || [];
+
   if (list.length === 0) {
     el.historyList.innerHTML = "<div class='history-item'>Пока нет завершенных раундов.</div>";
     return;
@@ -358,30 +356,38 @@ function renderArrest(room, game) {
 
   if (game.pendingReveal) {
     const pendingPlayer = room.players.find((p) => p.id === game.pendingReveal.targetId);
-    el.arrestStatus.textContent = `${pendingPlayer ? pendingPlayer.nickname : "Игрок"} задержан(а), результат проверки — на следующий день.`;
+    el.arrestStatus.textContent = `${pendingPlayer ? pendingPlayer.nickname : "Игрок"} задержан(а), результат проверки будет в начале следующего дня.`;
   } else if (game.myArrestVote) {
     if (game.myArrestVote === "skip") {
-      el.arrestStatus.textContent = "Ваш голос по аресту: пропуск.";
+      el.arrestStatus.textContent = "Ваш голос: пропуск.";
     } else {
       const p = room.players.find((x) => x.id === game.myArrestVote);
-      el.arrestStatus.textContent = `Ваш голос по аресту: ${p ? p.nickname : "выбран игрок"}.`;
+      el.arrestStatus.textContent = `Ваш голос: ${p ? p.nickname : "выбранный игрок"}.`;
     }
   } else {
-    el.arrestStatus.textContent = disabled ? "Фаза ареста не активна." : "Выберите цель или пропустите голосование.";
+    el.arrestStatus.textContent = disabled ? "Фаза ареста пока не активна." : "Выберите цель или пропустите голосование.";
   }
 }
 
 function renderCards(room, game) {
   const canVoteCards = game.status === "running" && game.phase === "day";
+  const totalAlive = game.aliveCount || room.players.length;
+
   el.cardsBoard.innerHTML = game.cards
     .map((card) => {
       const myVote = game.myVotes[card.id];
       const progress = game.voteProgress?.[card.id] || 0;
+
       return `<div class="card-item">
         <b>${escapeHtml(card.title)}</b>
-        <div class="muted">${escapeHtml(card.description)}</div>
-        <div class="muted">${escapeHtml(card.lore)}</div>
-        <div class="muted">Проголосовало: ${progress}/${game.aliveCount || room.players.length}</div>
+        <div class="muted card-meta">${escapeHtml(card.description)}</div>
+        <div class="muted">Проголосовало: ${progress}/${totalAlive}</div>
+
+        <details class="card-lore">
+          <summary>Показать лор карточки</summary>
+          <div class="lore-text">${escapeHtml(card.lore)}</div>
+        </details>
+
         <div class="card-options">
           ${card.options
             .map(
@@ -405,13 +411,14 @@ function renderNews(game) {
 
 function renderPhaseActions(game) {
   el.phaseActions.innerHTML = "";
+
   if (isHost() && game.status === "running") {
     if (game.phase === "day") {
       el.phaseActions.innerHTML = '<button id="hostForceDay" class="btn tiny">Завершить день</button>';
     } else if (game.phase === "night") {
-      el.phaseActions.innerHTML = '<button id="hostEndNight" class="btn tiny">Перейти к аресту</button>';
+      el.phaseActions.innerHTML = '<button id="hostEndNight" class="btn tiny">К аресту</button>';
     } else if (game.phase === "arrest") {
-      el.phaseActions.innerHTML = '<button id="hostForceArrest" class="btn tiny">Завершить арест</button>';
+      el.phaseActions.innerHTML = '<button id="hostForceArrest" class="btn tiny">Закрыть арест</button>';
     }
   }
 
@@ -423,14 +430,33 @@ function renderPhaseActions(game) {
 
 function renderChat() {
   const current = state.messages[state.chatScope] || [];
-  el.chatMessages.innerHTML = current
-    .slice(-120)
-    .map((m) => `<div class="msg"><small>${new Date(m.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} ${escapeHtml(m.fromNickname)}:</small> ${escapeHtml(m.text)}</div>`)
-    .join("");
+
+  el.chatMessages.innerHTML = current.length
+    ? current
+        .slice(-120)
+        .map(
+          (m) =>
+            `<div class="msg"><small>${new Date(m.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} ${escapeHtml(m.fromNickname)}:</small> ${escapeHtml(m.text)}</div>`
+        )
+        .join("")
+    : "<div class='muted'>Пока нет сообщений.</div>";
 
   el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
-  el.chatPublicTab.classList.toggle("primary", state.chatScope === "public");
-  el.chatSpyTab.classList.toggle("primary", state.chatScope === "spy");
+  el.chatScopeSelect.value = state.chatScope;
+}
+
+function syncChatScopeControl(game) {
+  const spyOption = el.chatScopeSelect.querySelector('option[value="spy"]');
+  const isSpy = game.myRole === "spy";
+
+  if (spyOption) {
+    spyOption.hidden = !isSpy;
+    spyOption.disabled = !isSpy;
+  }
+
+  if (!isSpy && state.chatScope === "spy") {
+    state.chatScope = "public";
+  }
 }
 
 function renderGame() {
@@ -447,8 +473,8 @@ function renderGame() {
   renderStats(game.stats);
   renderSpyInfo(game);
 
-  el.eventCard.textContent = game.event ? `Событие: ${game.event.title}. ${game.event.text}` : "";
-  el.storyCard.textContent = game.story ? `Политический фон: ${game.story}` : "";
+  el.eventCard.textContent = game.event ? `Событие: ${game.event.title}. ${game.event.text}` : "Событие дня пока не опубликовано.";
+  el.storyCard.textContent = game.story ? `Политический фон: ${game.story}` : "Фоновая история появится после старта следующего дня.";
 
   renderCards(room, game);
   renderArrest(room, game);
@@ -456,16 +482,12 @@ function renderGame() {
   renderNews(game);
   renderHistory(game);
 
-  if (state.chatScope === "spy" && game.myRole !== "spy") {
-    state.chatScope = "public";
-  }
-  el.chatSpyTab.classList.toggle("hidden", game.myRole !== "spy");
+  syncChatScopeControl(game);
   renderChat();
 }
 
 function clearRoomState() {
   state.room = null;
-  state.historyOpen = false;
   state.messages = { public: [], spy: [] };
 }
 
@@ -473,6 +495,7 @@ renderAvatarPreview();
 [el.skinSelect, el.hairStyleSelect, el.hairColorSelect, el.outfitColorSelect, el.bgColorSelect].forEach((node) => {
   node.addEventListener("change", renderAvatarPreview);
 });
+
 el.registerBtn.addEventListener("click", () => {
   const nickname = el.nicknameInput.value.trim();
   if (!nickname) {
@@ -586,6 +609,7 @@ el.cardsBoard.addEventListener("click", (event) => {
 el.arrestVoteBtn.addEventListener("click", () => {
   const targetId = el.arrestSelect.value;
   if (!targetId) return;
+
   socket.emit("game:vote-arrest", { targetId }, (res) => {
     if (!res?.ok) showToast(res?.error || "Голос не принят");
   });
@@ -603,11 +627,13 @@ el.phaseActions.addEventListener("click", (event) => {
       if (!res?.ok) showToast(res?.error || "Ошибка");
     });
   }
+
   if (event.target.id === "hostEndNight") {
     socket.emit("game:end-night", (res) => {
       if (!res?.ok) showToast(res?.error || "Ошибка");
     });
   }
+
   if (event.target.id === "hostForceArrest") {
     socket.emit("game:force-arrest", (res) => {
       if (!res?.ok) showToast(res?.error || "Ошибка");
@@ -615,24 +641,20 @@ el.phaseActions.addEventListener("click", (event) => {
   }
 });
 
-el.historyToggleBtn.addEventListener("click", () => {
-  state.historyOpen = !state.historyOpen;
-  renderGame();
-});
-
-el.chatPublicTab.addEventListener("click", () => {
-  state.chatScope = "public";
-  renderChat();
-});
-
-el.chatSpyTab.addEventListener("click", () => {
-  state.chatScope = "spy";
+el.chatScopeSelect.addEventListener("change", () => {
+  const scope = el.chatScopeSelect.value;
+  if (scope === "spy" && state.room?.game?.myRole !== "spy") {
+    state.chatScope = "public";
+  } else {
+    state.chatScope = scope;
+  }
   renderChat();
 });
 
 el.sendChatBtn.addEventListener("click", () => {
   const message = el.chatInput.value.trim();
   if (!message) return;
+
   socket.emit("chat:send", { scope: state.chatScope, text: message }, (res) => {
     if (!res?.ok) return showToast(res?.error || "Не удалось отправить сообщение");
     el.chatInput.value = "";
@@ -670,7 +692,7 @@ socket.on("room:state", (room) => {
   const changedRoom = state.room?.id && state.room.id !== room.id;
   if (changedRoom) {
     state.messages = { public: [], spy: [] };
-    state.historyOpen = false;
+    state.chatScope = "public";
   }
 
   state.room = room;
@@ -692,3 +714,4 @@ socket.on("chat:message", (msg) => {
 
 if (state.profile) setScreen("lobby");
 else setScreen("auth");
+
