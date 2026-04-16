@@ -1,0 +1,6 @@
+﻿node_modules/
+.env
+.DS_Store
+npm-debug.log*
+*.log
+.hosting-pids.json
