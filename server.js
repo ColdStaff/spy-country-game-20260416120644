@@ -1238,8 +1238,21 @@ io.on("connection", (socket) => {
     if (!g || g.status !== "running") return ack({ ok: false, error: "Игра не запущена." });
     if (room.hostId !== socket.id) return ack({ ok: false, error: "Только хост." });
     if (g.phase !== "night") return ack({ ok: false, error: "Сейчас не ночь." });
+    advanceDay(room);
+    ack({ ok: true });
+    emitState(room);
+  });
+
+  socket.on("game:start-arrest", (ack = () => {}) => {
+    const room = getRoom(socket.id);
+    const g = room?.game;
+    if (!g || g.status !== "running") return ack({ ok: false, error: "Игра не запущена." });
+    if (g.phase !== "night") return ack({ ok: false, error: "Арест можно запустить только ночью." });
+    if (g.removed.has(socket.id)) return ack({ ok: false, error: "Вы выбыли." });
+
     g.phase = "arrest";
     g.arrests = {};
+    news(g, "Игроки открыли голосование за задержание подозреваемого.", "neutral");
     ack({ ok: true });
     emitState(room);
   });

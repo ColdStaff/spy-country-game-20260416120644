@@ -288,25 +288,25 @@ select:focus {
 .paper-sheet {
   position: relative;
   color: var(--ink);
-  border-color: #9ea5ac;
+  border-color: #8f969c;
   background:
-    url("assets/form-blank-crumpled.svg") center / 100% 100% no-repeat,
-    linear-gradient(180deg, #ebe6dc, #ddd7ca);
+    url("assets/form-blank-crumpled.svg") center / cover no-repeat,
+    linear-gradient(180deg, #e9e2d6, #d8d1c4);
   background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
-  box-shadow: 0 12px 28px rgba(8, 10, 12, 0.34);
+  box-shadow: 0 14px 30px rgba(8, 10, 12, 0.34);
 }
 
 .paper-sheet::after {
   content: "";
   position: absolute;
-  right: 20px;
-  top: 12px;
-  width: 72px;
-  height: 24px;
-  background: rgba(162, 175, 191, 0.38);
+  right: 28px;
+  top: 10px;
+  width: 80px;
+  height: 26px;
+  background: rgba(167, 177, 189, 0.26);
   border-radius: 2px;
-  transform: rotate(-7deg);
+  transform: rotate(-8deg);
   pointer-events: none;
 }
 
@@ -330,32 +330,55 @@ select:focus {
 }
 
 .paper-sheet .cards-board {
-  gap: 10px;
+  gap: 12px;
 }
 
 .paper-sheet .card-item {
-  border: 0;
-  border-bottom: 1px solid rgba(113, 123, 137, 0.52);
-  border-radius: 0;
+  position: relative;
+  border: 1px solid #b0a894;
+  border-radius: 7px;
   background:
-    url("assets/doc-form-sheet.svg") center / 100% 100% no-repeat,
-    linear-gradient(180deg, rgba(247, 245, 239, 0.86), rgba(235, 231, 223, 0.86));
-  padding: 8px 4px 10px;
-  box-shadow: 0 2px 8px rgba(31, 37, 46, 0.1);
+    repeating-linear-gradient(
+      to bottom,
+      rgba(241, 238, 229, 0.96) 0,
+      rgba(241, 238, 229, 0.96) 34px,
+      rgba(163, 171, 181, 0.34) 34px,
+      rgba(163, 171, 181, 0.34) 36px
+    ),
+    linear-gradient(180deg, rgba(244, 240, 231, 0.97), rgba(231, 224, 212, 0.95));
+  padding: 12px 14px 14px 20px;
+  box-shadow: 0 3px 9px rgba(31, 37, 46, 0.12);
+  overflow: hidden;
+}
+
+.paper-sheet .card-item::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(194, 129, 129, 0.45);
+}
+
+.paper-sheet .card-item > * {
+  position: relative;
+  z-index: 1;
 }
 
 .paper-sheet .card-options {
-  gap: 7px;
+  gap: 2px;
+  margin-top: 8px;
 }
 
 .paper-sheet .card-option {
   border: 0;
-  border-bottom: 1px dashed rgba(122, 135, 151, 0.62);
+  border-bottom: 1px dashed rgba(115, 127, 143, 0.56);
   border-radius: 0;
-  background: rgba(250, 249, 245, 0.4);
+  background: transparent;
   color: #212c39;
   text-align: left;
-  padding: 6px 2px;
+  padding: 7px 0;
   cursor: pointer;
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
@@ -365,12 +388,12 @@ select:focus {
 
 .paper-sheet .card-option:hover {
   border-bottom-color: #6787ab;
-  background: rgba(231, 239, 248, 0.45);
+  background: rgba(226, 234, 244, 0.28);
 }
 
 .paper-sheet .card-option.voted {
   border-bottom-color: #4f77a1;
-  background: rgba(220, 233, 248, 0.62);
+  background: rgba(214, 226, 241, 0.34);
 }
 
 .option-check {
@@ -404,7 +427,8 @@ select:focus {
 
 .option-text {
   display: grid;
-  gap: 2px;
+  gap: 1px;
+  line-height: 1.32;
 }
 
 .option-text .muted {
@@ -412,22 +436,23 @@ select:focus {
 }
 
 .paper-sheet .card-lore {
-  margin-top: 6px;
+  margin-top: 7px;
   border: 1px dashed rgba(110, 120, 132, 0.7);
-  border-radius: 8px;
-  background: rgba(225, 221, 212, 0.24);
+  border-radius: 7px;
+  background: rgba(225, 221, 212, 0.18);
 }
 
 .paper-sheet .card-lore summary {
-  padding: 7px 8px;
+  padding: 7px 9px;
   font-size: 0.88rem;
-  color: #566577;
+  color: #4f5e72;
 }
 
 .paper-sheet .card-lore .lore-text {
-  padding: 0 8px 8px;
-  color: #4d5968;
+  padding: 0 9px 8px;
+  color: #455363;
   font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 .side-stack {
@@ -474,11 +499,12 @@ select:focus {
   position: relative;
   border: 1px solid #9ca3aa;
   border-radius: 0 0 10px 10px;
-  padding: 30px 26px 20px;
+  padding: 40px 30px 22px;
   display: grid;
   gap: 9px;
   color: var(--ink);
   overflow: hidden;
+  line-height: 1.4;
 }
 
 .fold-body > * {
@@ -508,6 +534,16 @@ select:focus {
   border-color: #7892af;
 }
 
+#arrestStartBtn {
+  background: rgba(227, 216, 196, 0.9) !important;
+  border-color: #9f8f73 !important;
+  color: #2f332f !important;
+}
+
+#arrestStartBtn:disabled {
+  opacity: 0.55;
+}
+
 #screen-game .fold-body .card-note,
 #screen-game .fold-body .stat-item,
 #screen-game .fold-body .problem-target,
@@ -520,6 +556,7 @@ select:focus {
   color: #1f2a37;
   box-shadow: none;
   padding: 6px 4px;
+  line-height: 1.42;
 }
 
 #screen-game .fold-body .card-note {
@@ -546,7 +583,7 @@ select:focus {
 }
 
 .doc-book .fold-body {
-  min-height: 280px;
+  min-height: 300px;
   background:
     url("assets/doc-open-book.svg") center / 100% 100% no-repeat,
     linear-gradient(180deg, #ebe5d8, #ddd6c7);
@@ -554,6 +591,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
+  padding: 46px 34px 26px;
 }
 
 .doc-report .fold-body {
@@ -565,6 +603,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
+  padding: 52px 40px 28px;
 }
 
 .doc-secret .fold-body {
@@ -576,6 +615,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(10, 8, 12, 0.3);
+  padding: 46px 34px 28px;
 }
 
 .doc-form .fold-body {
@@ -587,7 +627,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
-  padding-left: 32px;
+  padding: 48px 34px 26px;
 }
 
 .doc-newspaper .fold-body {
@@ -600,7 +640,7 @@ select:focus {
   border-color: transparent;
   box-shadow: 0 10px 24px rgba(8, 9, 11, 0.28);
   color: #1c1f24;
-  padding: 42px 34px 24px;
+  padding: 44px 34px 24px;
 }
 
 .doc-newspaper .news-feed {
@@ -642,6 +682,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(12, 10, 8, 0.28);
+  padding: 42px 34px 24px;
 }
 
 .doc-journal .fold-body {
@@ -653,7 +694,7 @@ select:focus {
   background-repeat: no-repeat;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(8, 10, 13, 0.26);
-  padding-left: 34px;
+  padding: 42px 34px 24px;
 }
 
 #globalProblem,

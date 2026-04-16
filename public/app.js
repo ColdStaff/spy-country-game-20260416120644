@@ -113,6 +113,7 @@ const el = {
   historyList: document.getElementById("historyList"),
 
   arrestSelect: document.getElementById("arrestSelect"),
+  arrestStartBtn: document.getElementById("arrestStartBtn"),
   arrestVoteBtn: document.getElementById("arrestVoteBtn"),
   arrestSkipBtn: document.getElementById("arrestSkipBtn"),
   arrestStatus: document.getElementById("arrestStatus"),
@@ -192,8 +193,8 @@ function phaseLabel(phase) {
 
 function phaseHint(phase) {
   if (phase === "day") return "Выберите по одной опции в каждой карточке.";
-  if (phase === "night") return "Ночная фаза: шпионы согласовывают линию поведения.";
-  if (phase === "arrest") return "Голосование за задержание подозреваемого.";
+  if (phase === "night") return "Ночь: шпионы обсуждают планы. Арест запускается только если игроки сами этого хотят.";
+  if (phase === "arrest") return "Открыто голосование за задержание подозреваемого.";
   return "";
 }
 
@@ -351,23 +352,31 @@ function renderArrest(room, game) {
   const alivePlayers = room.players.filter((p) => aliveSet.has(p.id));
   el.arrestSelect.innerHTML = alivePlayers.map((p) => `<option value="${p.id}">${escapeHtml(p.nickname)}</option>`).join("");
 
-  const disabled = !(game.status === "running" && game.phase === "arrest");
-  el.arrestSelect.disabled = disabled;
-  el.arrestVoteBtn.disabled = disabled;
-  el.arrestSkipBtn.disabled = disabled;
+  const canStart = game.status === "running" && game.phase === "night";
+  const votingActive = game.status === "running" && game.phase === "arrest";
+  el.arrestStartBtn.disabled = !canStart;
+  el.arrestSelect.disabled = !votingActive;
+  el.arrestVoteBtn.disabled = !votingActive;
+  el.arrestSkipBtn.disabled = !votingActive;
 
   if (game.pendingReveal) {
     const pendingPlayer = room.players.find((p) => p.id === game.pendingReveal.targetId);
     el.arrestStatus.textContent = `${pendingPlayer ? pendingPlayer.nickname : "Игрок"} задержан(а), результат проверки будет в начале следующего дня.`;
-  } else if (game.myArrestVote) {
+  } else if (votingActive && game.myArrestVote) {
     if (game.myArrestVote === "skip") {
       el.arrestStatus.textContent = "Ваш голос: пропуск.";
     } else {
       const p = room.players.find((x) => x.id === game.myArrestVote);
       el.arrestStatus.textContent = `Ваш голос: ${p ? p.nickname : "выбранный игрок"}.`;
     }
+  } else if (votingActive) {
+    el.arrestStatus.textContent = "Выберите цель или пропустите голосование.";
+  } else if (canStart) {
+    el.arrestStatus.textContent = "Арест не обязателен. Запускайте голосование только при реальном подозрении.";
+  } else if (game.phase === "day") {
+    el.arrestStatus.textContent = "Арест можно запустить ночью после завершения дневных решений.";
   } else {
-    el.arrestStatus.textContent = disabled ? "Фаза ареста пока не активна." : "Выберите цель или пропустите голосование.";
+    el.arrestStatus.textContent = "Фаза ареста сейчас закрыта.";
   }
 }
 
@@ -422,9 +431,9 @@ function renderPhaseActions(game) {
     if (game.phase === "day") {
       el.phaseActions.innerHTML = '<button id="hostForceDay" class="btn tiny">Завершить день</button>';
     } else if (game.phase === "night") {
-      el.phaseActions.innerHTML = '<button id="hostEndNight" class="btn tiny">К аресту</button>';
+      el.phaseActions.innerHTML = '<button id="hostEndNight" class="btn tiny">К новому дню</button>';
     } else if (game.phase === "arrest") {
-      el.phaseActions.innerHTML = '<button id="hostForceArrest" class="btn tiny">Закрыть арест</button>';
+      el.phaseActions.innerHTML = '<button id="hostForceArrest" class="btn tiny">Закрыть голосование</button>';
     }
   }
 
@@ -627,6 +636,12 @@ el.arrestVoteBtn.addEventListener("click", () => {
 el.arrestSkipBtn.addEventListener("click", () => {
   socket.emit("game:vote-arrest", { targetId: "skip" }, (res) => {
     if (!res?.ok) showToast(res?.error || "Голос не принят");
+  });
+});
+
+el.arrestStartBtn.addEventListener("click", () => {
+  socket.emit("game:start-arrest", (res) => {
+    if (!res?.ok) showToast(res?.error || "Не удалось открыть арест");
   });
 });
 
