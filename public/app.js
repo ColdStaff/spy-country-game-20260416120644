@@ -354,6 +354,10 @@ function renderArrest(room, game) {
 
   const canStart = game.status === "running" && game.phase === "night";
   const votingActive = game.status === "running" && game.phase === "arrest";
+  el.arrestStartBtn.classList.toggle("hidden", !canStart);
+  el.arrestSelect.classList.toggle("hidden", !votingActive);
+  el.arrestVoteBtn.classList.toggle("hidden", !votingActive);
+  el.arrestSkipBtn.classList.toggle("hidden", !votingActive);
   el.arrestStartBtn.disabled = !canStart;
   el.arrestSelect.disabled = !votingActive;
   el.arrestVoteBtn.disabled = !votingActive;
